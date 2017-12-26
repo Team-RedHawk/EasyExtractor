@@ -4,26 +4,26 @@
     tools:showIn="navigation_view">
 
     <group android:checkableBehavior="single">
-        <item android:title="Storage">
+        <item android:title="@string/storage">
             <menu>
         <item
             android:id="@+id/internal"
             android:icon="@drawable/ic_sd_storage"
-            android:title="Internel" />
+            android:title="@string/internal" />
         <item
             android:id="@+id/external"
             android:icon="@drawable/ic_sd_storage"
-            android:title="External" />
+            android:title="@string/external" />
             </menu>
         </item>
     </group>
 
-    <item android:title="Communicate">
+    <item android:title="@string/contact">
         <menu>
             <item
                 android:id="@+id/about"
                 android:icon="@drawable/ic_info"
-                android:title="About" />
+                android:title="@string/about" />
         </menu>
     </item>
 

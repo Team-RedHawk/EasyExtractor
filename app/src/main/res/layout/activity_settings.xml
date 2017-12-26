@@ -9,22 +9,23 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:padding="@dimen/activity_vertical_margin">
         <TextView
-            android:text=" Root :"
+            android:text="@string/root"
             android:layout_width="match_parent"
             android:layout_height="26dp" />
         <Switch
-            android:text=" Activar Root Access"
+            android:text="@string/enablerootaccess"
             android:layout_width="match_parent"
             android:layout_height="26dp" />
         <TextView
-            android:text=" Temas"
+            android:text="@string/theme"
             android:layout_width="match_parent"
             android:layout_height="26dp" />
         <Switch
             android:id="@+id/darkTheme"
-            android:text=" Dark"
+            android:text="@string/dark"
             android:layout_width="match_parent"
             android:layout_height="26dp" />
     </LinearLayout>

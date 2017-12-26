@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="action_settings">Ajustes</string>
+    <string name="storage">Almacenamiento</string>
+    <string name="internal">Interno</string>
+    <string name="external">Externo</string>
+    <string name="about">Acerca de</string>
+    <string name="contact">Contacto</string>
+    <string name="delete">Delete</string>
+    <string name="copy">Copy</string>
+    <string name="cut">Cut</string>
+    <string name="rename">Rename</string>
+    <string name="zip">Zip</string>
+    <string name="root">Root:</string>
+    <string name="enablerootaccess">Enabled Root Access</string>
+    <string name="theme">Theme</string>
+    <string name="dark">Dark</string>
+</resources>
