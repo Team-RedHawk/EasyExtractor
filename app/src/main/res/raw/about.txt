@@ -1,0 +1,11 @@
+Esta app se hizo para todos aquellos los ports que quieren portar una rom en cualquier momento sin necesidad de usar un pc , con esta app ya lo puedes hacer viene con un extractor de archivos zip y boot.img 
+
+creditos: Romeo de Leon (Phineas) 
+
+Team Panther:
+-Malcolm Medina Riascos(ASAZING)
+-Jhuan Reategui Solis (Chijure)
+-Efren Saenz (Efren)
+-Elias Dávila Torres(DanteFX)
+
+Somos un grupo de desarrolladores basicos de android que tenemos como objetivo el mejoramiento de nuestros dispositivos android ya sea en rendimiento apariencia y entre otras cosas.
