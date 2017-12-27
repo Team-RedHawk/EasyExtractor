@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item android:id="@+id/eliminar"
-        android:title="@string/delete" />
+        android:title="Eliminar" />
     <item android:id="@+id/copiar"
-        android:title="@string/copy" />
+        android:title="Copiar" />
     <item android:id="@+id/cortar"
-        android:title="@string/cut" />
+        android:title="Cortar" />
     <item android:id="@+id/comprimir"
-        android:title="@string/zip" />
+        android:title="Comprimir" />
     <item android:id="@+id/renombrar"
-        android:title="@string/rename" />
+        android:title="Renombrar" />
 </menu>
