@@ -6,6 +6,9 @@
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimary</item>
         <item name="colorAccent">@color/colorAccent</item>
+        <!-- Ajustando Toolbar. -->
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
     </style>
 
     <!-- Tema 2. -->
@@ -14,6 +17,9 @@
         <item name="colorPrimary">@color/colorPrimaryTheme2</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDarkTheme2</item>
         <item name="colorAccent">@color/colorAccentTheme2</item>
+        <!-- Ajustando Toolbar. -->
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
     </style>
 
     <style name="AppTheme.NoActionBar">
