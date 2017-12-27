@@ -9,7 +9,7 @@
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
     android:background="@android:color/white"
-    tools:context="teampanther.developers.easyextractor.SplashActivity">
+    tools:context="com.teampanther.easyextractor.SplashActivity">
 
     <ImageView
         android:id="@+id/splash_img"
@@ -26,7 +26,7 @@
         android:layout_marginBottom="16dp"
         android:layout_centerHorizontal="true"
         android:layout_alignParentBottom="true"
-        android:text="Copyright © 2017-2018"
+        android:text="TEAM PANTHER © 2017-2018"
         android:textAppearance="@style/TextAppearance.AppCompat.Body1" />
 
 </RelativeLayout>

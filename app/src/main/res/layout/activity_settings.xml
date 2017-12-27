@@ -1,33 +1,34 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="teampanther.developers.easyextractor.Settings">
-
+    tools:context="com.teampanther.easyextractor.Settings">
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:padding="@dimen/activity_vertical_margin">
+        android:orientation="vertical">
         <TextView
-            android:text="@string/root"
+            android:text=" Root :"
             android:layout_width="match_parent"
             android:layout_height="26dp" />
         <Switch
-            android:text="@string/enablerootaccess"
+            android:text=" Activar Root Access"
             android:layout_width="match_parent"
             android:layout_height="26dp" />
         <TextView
-            android:text="@string/theme"
+            android:text=" Temas"
             android:layout_width="match_parent"
             android:layout_height="26dp" />
         <Switch
             android:id="@+id/darkTheme"
-            android:text="@string/dark"
+            android:text=" Dark"
             android:layout_width="match_parent"
             android:layout_height="26dp" />
     </LinearLayout>
 
-</android.support.constraint.ConstraintLayout>
+
+
+</RelativeLayout>
