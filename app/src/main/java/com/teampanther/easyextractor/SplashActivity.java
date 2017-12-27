@@ -3,6 +3,7 @@ package com.teampanther.easyextractor;
 import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
@@ -17,13 +18,18 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 public class SplashActivity extends AppCompatActivity {
+    SharedPreferences sharedPreferences;
+    SharedPreferences.Editor editor;
 
     private static final int MY_PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE = 0;
     private static final int MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        // Selecciona el tema guardado por el usuario
+        theme();
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_splash);
         // Here, thisActivity is the current activity
         if (ContextCompat.checkSelfPermission(SplashActivity.this,
@@ -107,6 +113,26 @@ public class SplashActivity extends AppCompatActivity {
         texto.setAnimation(animation);
         animation.reset();
 
+    }
+
+    public void theme() {
+        sharedPreferences = getSharedPreferences("VALUES", Context.MODE_PRIVATE);
+        int theme = sharedPreferences.getInt("THEME", 1);
+        settingTheme(theme);
+    }
+
+    public void settingTheme(int theme) {
+        switch (theme) {
+            case 1:
+                setTheme(R.style.AppTheme);
+                break;
+            case 2:
+                setTheme(R.style.AppTheme2);
+                break;
+            default:
+                setTheme(R.style.AppTheme);
+                break;
+        }
     }
 
 

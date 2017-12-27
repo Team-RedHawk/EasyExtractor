@@ -1,6 +1,8 @@
 package com.teampanther.easyextractor;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
@@ -17,9 +19,17 @@ import android.view.MenuItem;
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener,InternalFragment.OnFragmentInteractionListener
         ,ExternalFragment.OnFragmentInteractionListener,AboutFragment.OnFragmentInteractionListener{
+    SharedPreferences sharedPreferences;
+    SharedPreferences.Editor editor;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        // Selecciona el tema guardado por el usuario
+        theme();
+
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -111,6 +121,26 @@ public class MainActivity extends AppCompatActivity
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    public void theme() {
+        sharedPreferences = getSharedPreferences("VALUES", Context.MODE_PRIVATE);
+        int theme = sharedPreferences.getInt("THEME", 1);
+        settingTheme(theme);
+    }
+
+    public void settingTheme(int theme) {
+        switch (theme) {
+            case 1:
+                setTheme(R.style.AppTheme);
+                break;
+            case 2:
+                setTheme(R.style.AppTheme2);
+                break;
+            default:
+                setTheme(R.style.AppTheme);
+                break;
+        }
     }
 
     @Override

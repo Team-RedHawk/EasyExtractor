@@ -1,34 +1,59 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.teampanther.easyextractor.Settings">
+    android:background="@android:color/white"
+    android:fitsSystemWindows="false">
+
+    <android.support.design.widget.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:theme="@style/AppTheme.AppBarOverlay">
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="?attr/colorPrimary"
+        app:popupTheme="@style/AppTheme.PopupOverlay"
+        tools:targetApi="lollipop" />
+    </android.support.design.widget.AppBarLayout>
+
+
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:paddingLeft="24dp"
+        android:paddingRight="24dp"
+        android:paddingTop="16dp"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
         <TextView
-            android:text=" Root :"
             android:layout_width="match_parent"
-            android:layout_height="26dp" />
+            android:layout_height="26dp"
+            android:text="@string/root" />
+
         <Switch
-            android:text=" Activar Root Access"
             android:layout_width="match_parent"
-            android:layout_height="26dp" />
+            android:layout_height="26dp"
+            android:text="@string/enablerootaccess" />
+
         <TextView
-            android:text=" Temas"
             android:layout_width="match_parent"
-            android:layout_height="26dp" />
+            android:layout_height="26dp"
+            android:text="@string/theme" />
+
         <Switch
             android:id="@+id/darkTheme"
-            android:text=" Dark"
             android:layout_width="match_parent"
-            android:layout_height="26dp" />
+            android:layout_height="26dp"
+            android:text="@string/dark" />
     </LinearLayout>
 
 
 
-</RelativeLayout>
+</android.support.design.widget.CoordinatorLayout>
