@@ -39,6 +39,8 @@ public class AdapterItems extends ArrayAdapter {
             holder = new ViewHolder();
             holder.file = (ImageView)vista.findViewById(R.id.folder_file);
             holder.nameFile = (TextView)vista.findViewById(R.id.name_file);
+            holder.size = (TextView)vista.findViewById(R.id.sizeFile);
+            holder.data = (TextView)vista.findViewById(R.id.metaData);
 
             vista.setTag(holder);
 
@@ -49,6 +51,8 @@ public class AdapterItems extends ArrayAdapter {
 
         holder.file.setImageResource(items[position].getImage());
         holder.nameFile.setText(items[position].getName());
+        holder.size.setText(items[position].getSize());
+        holder.data.setText(items[position].getMetadata());
 
         return vista;
     }
@@ -57,5 +61,8 @@ public class AdapterItems extends ArrayAdapter {
 
         ImageView file;
         TextView nameFile;
+        TextView size;
+        TextView data;
     }
 }
+

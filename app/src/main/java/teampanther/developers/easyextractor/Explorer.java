@@ -6,6 +6,7 @@ import android.content.DialogInterface;
 import android.widget.Toast;
 
 import java.io.File;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -29,8 +30,10 @@ public class Explorer {
         pathFiles = new ArrayList();
         List pathFolders = new ArrayList();
         List nameFiles = new ArrayList();
+        List sizeFiles = new ArrayList();
+        List metadata = new ArrayList();
 
-       //Llamamos agregamos decisor para mostrar carpeta anterior
+        //Llamamos agregamos decisor para mostrar carpeta anterior
 
         /*IMPORTANTE LEER:
           en esta parte es donde tienes que implementar algun metodo para poder
@@ -76,6 +79,11 @@ public class Explorer {
 
             File file = new File(pathFolders.get(i).toString());
             nameFiles.add(file.getName());
+            sizeFiles.add(file.length()); // Optengo el peso
+                                         // del fichero en Bytes
+            metadata.add(file.lastModified());
+
+
 
             if (file.isFile()){
 
@@ -103,7 +111,7 @@ public class Explorer {
                 image = R.drawable.ic_folder;
             }
 
-            items[i] = new Items(image,nameFiles.get(i).toString());
+            items[i] = new Items(image,nameFiles.get(i).toString(),sizeFiles.get(i).toString(), (Long) metadata.get(i));
         }
 
         pathFiles = pathFolders;
@@ -159,6 +167,19 @@ public class Explorer {
             @Override
             public void onClick(DialogInterface dialog, int which) {
 
+                switch (which){
+                    case 0:
+                        break;
+                    case 1:
+                        break;
+                    case 2:
+                        break;
+                    case 3:
+                        break;
+                    case 4:
+                        break;
+
+                }
                 Toast.makeText(context,"Accion: "+items[which],Toast.LENGTH_LONG).show();
 
             }
