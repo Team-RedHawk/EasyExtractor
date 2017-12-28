@@ -43,7 +43,7 @@
 
                     <TextView
                         android:id="@+id/metaData"
-                        android:layout_width="186dp"
+                        android:layout_width="167dp"
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="20dp"
                         android:gravity="left"
@@ -54,7 +54,7 @@
 
                     <TextView
                         android:id="@+id/sizeFile"
-                        android:layout_width="61dp"
+                        android:layout_width="119dp"
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="20dp"
                         android:gravity="center"
