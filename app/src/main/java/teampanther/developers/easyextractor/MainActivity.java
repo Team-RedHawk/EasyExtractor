@@ -13,14 +13,22 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.content.SharedPreferences;
+import android.content.Context;
+
 
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener,InternalFragment.OnFragmentInteractionListener
         ,ExternalFragment.OnFragmentInteractionListener,About.OnFragmentInteractionListener{
 
+    SharedPreferences sharedPreferences;
+    SharedPreferences.Editor editor;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
+        theme();
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -110,5 +118,26 @@ public class MainActivity extends AppCompatActivity
     public void onFragmentInteraction(Uri uri) {
 
     }
+
+    public void theme() {
+                sharedPreferences = getSharedPreferences("VALUES", Context.MODE_PRIVATE);
+                int theme = sharedPreferences.getInt("THEME", 1);
+                settingTheme(theme);
+            }
+
+             public void settingTheme(int theme) {
+                switch (theme) {
+                        case 1:
+                                setTheme(R.style.AppTheme);
+                                break;
+                        case 2:
+                                setTheme(R.style.AppTheme2);
+                                break;
+                        default:
+                                setTheme(R.style.AppTheme);
+                               break;
+                    }
+            }
+
 
 }
