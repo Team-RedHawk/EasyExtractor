@@ -4,147 +4,465 @@ package teampanther.developers.easyextractor;
  * Created by malcolmx on 28/12/17.
  */
 
-import android.util.Log;
+import android.content.Context;
+import android.database.Cursor;
+import android.media.MediaMetadataRetriever;
+import android.net.Uri;
+import android.os.Environment;
+import android.provider.MediaStore;
+import android.support.v4.content.CursorLoader;
+import android.text.format.DateFormat;
+import android.text.format.Formatter;
+import android.webkit.MimeTypeMap;
 
 import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
 import java.io.File;
+import java.io.FileFilter;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.channels.FileChannel;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 
 public class FileHelper {
-    private static final int BUFFER_SIZE = 8192;//2048;
-    private static String TAG = FileHelper.class.getName().toString();
-    private static String parentPath = "";
 
+    public static File copyFile(File src, File path) throws Exception {
 
-    public static boolean zip(String sourcePath, String destinationPath, String destinationFileName, Boolean includeParentFolder) {
-        new File(destinationPath).mkdirs();
-        FileOutputStream fileOutputStream;
-        ZipOutputStream zipOutputStream = null;
         try {
-            if (!destinationPath.endsWith("/")) destinationPath += "/";
-            String destination = destinationPath + destinationFileName;
-            File file = new File(destination);
-            if (!file.exists()) file.createNewFile();
 
-            fileOutputStream = new FileOutputStream(file);
-            zipOutputStream = new ZipOutputStream(new BufferedOutputStream(fileOutputStream));
+            if (src.isDirectory()) {
 
-            if (includeParentFolder)
-                parentPath = new File(sourcePath).getParent() + "/";
-            else
-                parentPath = sourcePath;
+                if (src.getPath().equals(path.getPath())) throw new Exception();
 
-            zipFile(zipOutputStream, sourcePath);
+                File directory = createDirectory(path, src.getName());
 
-        } catch (IOException ioe) {
-            Log.d(TAG, ioe.getMessage());
-            return false;
-        } finally {
-            if (zipOutputStream != null)
-                try {
-                    zipOutputStream.close();
-                } catch (IOException e) {
+                for (File file : src.listFiles()) copyFile(file, directory);
 
-                }
+                return directory;
+            }
+            else {
+
+                File file = new File(path, src.getName());
+
+                FileChannel channel = new FileInputStream(src).getChannel();
+
+                channel.transferTo(0, channel.size(), new FileOutputStream(file).getChannel());
+
+                return file;
+            }
         }
+        catch (Exception e) {
 
-        return true;
-
+            throw new Exception(String.format("Error copying %s", src.getName()));
+        }
     }
 
-    private static void zipFile(ZipOutputStream zipOutputStream, String sourcePath) throws IOException {
+    //----------------------------------------------------------------------------------------------
 
-        java.io.File files = new java.io.File(sourcePath);
-        java.io.File[] fileList = files.listFiles();
+    public static File createDirectory(File path, String name) throws Exception {
 
-        String entryPath = "";
-        BufferedInputStream input;
-        for (java.io.File file : fileList) {
-            if (file.isDirectory()) {
-                zipFile(zipOutputStream, file.getPath());
-            } else {
-                byte data[] = new byte[BUFFER_SIZE];
-                FileInputStream fileInputStream = new FileInputStream(file.getPath());
-                input = new BufferedInputStream(fileInputStream, BUFFER_SIZE);
-                entryPath = file.getAbsolutePath().replace(parentPath, "");
+        File directory = new File(path, name);
 
-                ZipEntry entry = new ZipEntry(entryPath);
-                zipOutputStream.putNextEntry(entry);
+        if (directory.mkdirs()) return directory;
 
-                int count;
-                while ((count = input.read(data, 0, BUFFER_SIZE)) != -1) {
-                    zipOutputStream.write(data, 0, count);
-                }
-                input.close();
+        if (directory.exists()) throw new Exception(String.format("%s already exists", name));
+
+        throw new Exception(String.format("Error creating %s", name));
+    }
+
+    public static File deleteFile(File file) throws Exception {
+
+        if (file.isDirectory()) {
+
+            for (File child : file.listFiles()) {
+
+                deleteFile(child);
             }
         }
 
+        if (file.delete()) return file;
 
+        throw new Exception(String.format("Error deleting %s", file.getName()));
     }
 
-    public static Boolean unzip(String sourceFile, String destinationFolder) {
-        ZipInputStream zis = null;
+    public static File renameFile(File file, String name) throws Exception {
+
+        String extension = getExtension(file.getName());
+
+        if (!extension.isEmpty()) name += "." + extension;
+
+        File newFile = new File(file.getParent(), name);
+
+        if (file.renameTo(newFile)) return newFile;
+
+        throw new Exception(String.format("Error renaming %s", file.getName()));
+    }
+
+    public static File unzip(File zip) throws Exception {
+
+        File directory = createDirectory(zip.getParentFile(), removeExtension(zip.getName()));
+
+        FileInputStream fileInputStream = new FileInputStream(zip);
+
+        BufferedInputStream bufferedInputStream = new BufferedInputStream(fileInputStream);
+
+        try (ZipInputStream zipInputStream = new ZipInputStream(bufferedInputStream)) {
+
+            ZipEntry zipEntry;
+
+            while ((zipEntry = zipInputStream.getNextEntry()) != null) {
+
+                byte[] buffer = new byte[1024];
+
+                File file = new File(directory, zipEntry.getName());
+
+                if (zipEntry.isDirectory()) {
+
+                    if (!file.mkdirs()) throw new Exception("Error uncompressing");
+                }
+                else {
+
+                    int count;
+
+                    try (FileOutputStream fileOutputStream = new FileOutputStream(file)) {
+
+                        while ((count = zipInputStream.read(buffer)) != -1) {
+
+                            fileOutputStream.write(buffer, 0, count);
+                        }
+                    }
+                }
+            }
+        }
+
+        return directory;
+    }
+
+
+    public static File getInternalStorage() {
+
+        //returns the path to the internal storage
+
+        return Environment.getExternalStorageDirectory();
+    }
+
+    //----------------------------------------------------------------------------------------------
+
+    public static File getExternalStorage() {
+
+        //returns the path to the external storage or null if it doesn't exist
+
+        String path = System.getenv("SECONDARY_STORAGE");
+
+        return path != null ? new File(path) : null;
+    }
+
+    public static File getPublicDirectory(String type) {
+
+        //returns the path to the public directory of the given type
+
+        return Environment.getExternalStoragePublicDirectory(type);
+    }
+
+    //----------------------------------------------------------------------------------------------
+
+    public static String getLastModified(File file) {
+
+        //returns the last modified date of the given file as a formatted string
+
+        return DateFormat.format("dd MMM yyy", new Date(file.lastModified())).toString();
+    }
+
+    public static String getMimeType(File file) {
+
+        //returns the mime type for the given file or null iff there is none
+
+        return MimeTypeMap.getSingleton().getMimeTypeFromExtension(getExtension(file.getName()));
+    }
+
+    public static String getName(File file) {
+
+        //returns the name of the file hiding extensions of known file types
+
+        switch (FileType.getFileType(file)) {
+
+            case DIRECTORY:
+                return file.getName();
+
+            case MISC_FILE:
+                return file.getName();
+
+            default:
+                return removeExtension(file.getName());
+        }
+    }
+
+    public static String getPath(File file) {
+
+        //returns the path of the given file or null if the file is null
+
+        return file != null ? file.getPath() : null;
+    }
+
+    public static String getSize(Context context, File file) {
+
+        if (file.isDirectory()) {
+
+            File[] children = getChildren(file);
+
+            if (children == null) return null;
+
+            return String.format("%s items", children.length);
+        }
+        else {
+
+            return Formatter.formatShortFileSize(context, file.length());
+        }
+    }
+
+    public static String getStorageUsage(Context context) {
+
+        File internal = getInternalStorage();
+
+        File external = getExternalStorage();
+
+        long f = internal.getFreeSpace();
+
+        long t = internal.getTotalSpace();
+
+        if (external != null) {
+
+            f += external.getFreeSpace();
+
+            t += external.getTotalSpace();
+        }
+
+        String use = Formatter.formatShortFileSize(context, t - f);
+
+        String tot = Formatter.formatShortFileSize(context, t);
+
+        return String.format("%s used of %s", use, tot);
+    }
+
+    public static String getTitle(File file) {
 
         try {
-            zis = new ZipInputStream(new BufferedInputStream(new FileInputStream(sourceFile)));
-            ZipEntry ze;
-            int count;
-            byte[] buffer = new byte[BUFFER_SIZE];
-            while ((ze = zis.getNextEntry()) != null) {
-                String fileName = ze.getName();
-                fileName = fileName.substring(fileName.indexOf("/") + 1);
-                File file = new File(destinationFolder, fileName);
-                File dir = ze.isDirectory() ? file : file.getParentFile();
 
-                if (!dir.isDirectory() && !dir.mkdirs())
-                    throw new FileNotFoundException("Invalid path: " + dir.getAbsolutePath());
-                if (ze.isDirectory()) continue;
-                FileOutputStream fout = new FileOutputStream(file);
-                try {
-                    while ((count = zis.read(buffer)) != -1)
-                        fout.write(buffer, 0, count);
-                } finally {
-                    fout.close();
-                }
+            MediaMetadataRetriever retriever = new MediaMetadataRetriever();
 
-            }
-        } catch (IOException ioe) {
-            Log.d(TAG, ioe.getMessage());
-            return false;
-        } finally {
-            if (zis != null)
-                try {
-                    zis.close();
-                } catch (IOException e) {
+            retriever.setDataSource(file.getPath());
 
-                }
+            return retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_TITLE);
         }
-        return true;
-    }
+        catch (Exception e) {
 
-
-    public static void saveToFile(String destinationPath, String data, String fileName) {
-        try {
-            new File(destinationPath).mkdirs();
-            File file = new File(destinationPath + fileName);
-            if (!file.exists()) {
-                file.createNewFile();
-            }
-            FileOutputStream fileOutputStream = new FileOutputStream(file, true);
-            fileOutputStream.write((data + System.getProperty("line.separator")).getBytes());
-
-        } catch (FileNotFoundException ex) {
-            Log.d(TAG, ex.getMessage());
-        } catch (IOException ex) {
-            Log.d(TAG, ex.getMessage());
+            return null;
         }
     }
 
+    private static String getExtension(String filename) {
+
+        //returns the file extension or an empty string iff there is no extension
+
+        return filename.contains(".") ? filename.substring(filename.lastIndexOf(".") + 1) : "";
+    }
+
+    //----------------------------------------------------------------------------------------------
+
+    public static String removeExtension(String filename) {
+
+        int index = filename.lastIndexOf(".");
+
+        return index != -1 ? filename.substring(0, index) : filename;
+    }
+
+    public static int compareDate(File file1, File file2) {
+
+        long lastModified1 = file1.lastModified();
+
+        long lastModified2 = file2.lastModified();
+
+        return Long.compare(lastModified2, lastModified1);
+    }
+
+    //----------------------------------------------------------------------------------------------
+
+    public static int compareName(File file1, File file2) {
+
+        String name1 = file1.getName();
+
+        String name2 = file2.getName();
+
+        return name1.compareToIgnoreCase(name2);
+    }
+
+    public static int compareSize(File file1, File file2) {
+
+        long length1 = file1.length();
+
+        long length2 = file2.length();
+
+        return Long.compare(length2, length1);
+    }
+
+    //----------------------------------------------------------------------------------------------
+
+    public static int getImageResource(File file) {
+
+        switch (FileType.getFileType(file)) {
+
+            case DIRECTORY:
+                return R.drawable.ic_folder;
+
+            case MISC_FILE:
+                return R.drawable.ic_file;
+
+            case AUDIO:
+                return R.drawable.ic_audio;
+
+            case IMAGE:
+                return R.drawable.ic_image;
+
+            case VIDEO:
+                return R.drawable.ic_video;
+
+            case DOC:
+                return R.drawable.ic_doc;
+
+            case PPT:
+                return R.drawable.ic_ppt;
+
+            case XLS:
+                return R.drawable.ic_xls;
+
+            case PDF:
+                return R.drawable.ic_pdf;
+
+            case TXT:
+                return R.drawable.ic_txt;
+
+            case ZIP:
+                return R.drawable.ic_zip;
+
+            case APK:
+                return  R.drawable.ic_apk;
+
+            default:
+                return 0;
+        }
+    }
+
+    public static boolean isStorage(File dir) {
+
+        return dir == null || dir.equals(getInternalStorage()) || dir.equals(getExternalStorage());
+    }
+
+    //----------------------------------------------------------------------------------------------
+
+    public static File[] getChildren(File directory) {
+
+        if (!directory.canRead()) return null;
+
+        return directory.listFiles(new FileFilter() {
+            @Override
+            public boolean accept(File pathname) {
+                return pathname.exists() && !pathname.isHidden();
+            }
+        });
+    }
+
+    //----------------------------------------------------------------------------------------------
+
+
+    public static ArrayList<File> searchFilesName(Context context, String name) {
+
+        ArrayList<File> list = new ArrayList<>();
+
+        Uri uri = MediaStore.Files.getContentUri("external");
+
+        String data[] = new String[]{MediaStore.Files.FileColumns.DATA};
+
+        Cursor cursor = new CursorLoader(context, uri, data, null, null, null).loadInBackground();
+
+        if (cursor != null) {
+
+            while (cursor.moveToNext()) {
+
+                File file = new File(cursor.getString(cursor.getColumnIndex(data[0])));
+
+                if (file.exists() && file.getName().startsWith(name)) list.add(file);
+            }
+
+            cursor.close();
+        }
+
+        return list;
+    }
+
+    public enum FileType {
+
+        DIRECTORY, MISC_FILE, AUDIO, IMAGE, VIDEO, DOC, PPT, XLS, PDF, TXT, ZIP, APK;
+
+        public static FileType getFileType(File file) {
+
+            if (file.isDirectory())
+                return FileType.DIRECTORY;
+
+            String mime = FileHelper.getMimeType(file);
+
+            if (mime == null)
+                return FileType.MISC_FILE;
+
+            if (mime.startsWith("audio"))
+                return FileType.AUDIO;
+
+            if (mime.startsWith("image"))
+                return FileType.IMAGE;
+
+            if (mime.startsWith("video"))
+                return FileType.VIDEO;
+
+            if (mime.startsWith("application/ogg"))
+                return FileType.AUDIO;
+
+            if (mime.startsWith("application/msword"))
+                return FileType.DOC;
+
+            if (mime.startsWith("application/vnd.ms-word"))
+                return FileType.DOC;
+
+            if (mime.startsWith("application/vnd.ms-powerpoint"))
+                return FileType.PPT;
+
+            if (mime.startsWith("application/vnd.ms-excel"))
+                return FileType.XLS;
+
+            if (mime.startsWith("application/vnd.openxmlformats-officedocument.wordprocessingml"))
+                return FileType.DOC;
+
+            if (mime.startsWith("application/vnd.openxmlformats-officedocument.presentationml"))
+                return FileType.PPT;
+
+            if (mime.startsWith("application/vnd.openxmlformats-officedocument.spreadsheetml"))
+                return FileType.XLS;
+
+            if (mime.startsWith("application/pdf"))
+                return FileType.PDF;
+
+            if (mime.startsWith("text"))
+                return FileType.TXT;
+
+            if (mime.startsWith("application/zip"))
+                return FileType.ZIP;
+
+            if (mime.startsWith("application/vnd.android.package-archive"))
+                return  FileType.APK;
+
+            return FileType.MISC_FILE;
+        }
+    }
 }

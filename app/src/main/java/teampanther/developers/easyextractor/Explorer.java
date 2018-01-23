@@ -11,6 +11,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import static teampanther.developers.easyextractor.FileHelper.getImageResource;
+
 public class Explorer {
 
     Context context;
@@ -84,7 +86,8 @@ public class Explorer {
             metadata.add(file.lastModified());
 
 
-
+            //Remplazo esto por uno mejor estructurado
+            /*
             if (file.isFile()){
 
                 String name = file.getName(); //nombre del archivo
@@ -109,7 +112,10 @@ public class Explorer {
             }else {
 
                 image = R.drawable.ic_folder;
-            }
+            }*/
+
+            //Esta linea ahora obtiene la imagen correspondiente
+            image= getImageResource(file);
 
             items[i] = new Items(image,nameFiles.get(i).toString(),sizeFiles.get(i).toString(), (Long) metadata.get(i));
         }
@@ -131,6 +137,8 @@ public class Explorer {
 
         //seteo de imagen a mostrar para archivo
         int icon;
+        //Nuevamente este metodo lo sustituyo por uno optimizado
+        /*
         if (file.isFile()){
 
             String name = file.getName(); //nombre del archivo
@@ -155,7 +163,9 @@ public class Explorer {
         }else {
 
             icon = R.drawable.ic_folder;
-        }
+        }*/
+
+        icon= getImageResource(file);
 
         //En esta parte de aqui es donde se valida el evento elegido podrias implementar un switch
         //y mandar a llamar metodos para ciertas opciones
@@ -169,22 +179,24 @@ public class Explorer {
 
                 switch (which){
                     case 0:
+                        //copiar
                         break;
                     case 1:
+                        //cortar
                         break;
                     case 2:
+                        //comprimir
                         break;
                     case 3:
+                        //renombrar
                         break;
                     case 4:
+                        //eliminar
                         break;
-
                 }
                 Toast.makeText(context,"Accion: "+items[which],Toast.LENGTH_LONG).show();
-
             }
         });
-
         builder.create().show();
     }
 
