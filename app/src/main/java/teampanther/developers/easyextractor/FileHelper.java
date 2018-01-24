@@ -9,6 +9,7 @@ import android.database.Cursor;
 import android.media.MediaMetadataRetriever;
 import android.net.Uri;
 import android.os.Environment;
+import android.os.storage.StorageManager;
 import android.provider.MediaStore;
 import android.support.v4.content.CursorLoader;
 import android.text.format.DateFormat;
@@ -21,6 +22,9 @@ import java.io.FileFilter;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.lang.reflect.Array;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.nio.channels.FileChannel;
 import java.util.ArrayList;
 import java.util.Date;
@@ -144,7 +148,7 @@ public class FileHelper {
 
 
     public static File getInternalStorage() {
-
+        //Funciona
         //returns the path to the internal storage
 
         return Environment.getExternalStorageDirectory();
@@ -153,12 +157,50 @@ public class FileHelper {
     //----------------------------------------------------------------------------------------------
 
     public static File getExternalStorage() {
-
+        //en algunos dispositivos funciona
         //returns the path to the external storage or null if it doesn't exist
-
-        String path = System.getenv("SECONDARY_STORAGE");
+        String path;
+        if (Environment.isExternalStorageRemovable()){
+            path = System.getenv("EXTERNAL_STORAGE");
+        } else {
+            path = System.getenv("SECONDARY_STORAGE");
+            if (path == null || path.length() == 0) {
+                path = System.getenv("EXTERNAL_SDCARD_STORAGE");
+            }
+        }
 
         return path != null ? new File(path) : null;
+    }
+
+    public static String getStoragePath(Context mContext, boolean is_removale) {
+        //Mejor alternativa
+        StorageManager mStorageManager = (StorageManager) mContext.getSystemService(Context.STORAGE_SERVICE);
+        Class<?> storageVolumeClazz = null;
+        try {
+            storageVolumeClazz = Class.forName("android.os.storage.StorageVolume");
+            Method getVolumeList = mStorageManager.getClass().getMethod("getVolumeList");
+            Method getPath = storageVolumeClazz.getMethod("getPath");
+            Method isRemovable = storageVolumeClazz.getMethod("isRemovable");
+            Object result = getVolumeList.invoke(mStorageManager);
+            final int length = Array.getLength(result);
+            for (int i = 0; i < length; i++) {
+                Object storageVolumeElement = Array.get(result, i);
+                String path = (String) getPath.invoke(storageVolumeElement);
+                boolean removable = (Boolean) isRemovable.invoke(storageVolumeElement);
+                if (is_removale == removable) {
+                    return path;
+                }
+            }
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        } catch (InvocationTargetException e) {
+            e.printStackTrace();
+        } catch (NoSuchMethodException e) {
+            e.printStackTrace();
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     public static File getPublicDirectory(String type) {
@@ -356,9 +398,8 @@ public class FileHelper {
         }
     }
 
-    public static boolean isStorage(File dir) {
-
-        return dir == null || dir.equals(getInternalStorage()) || dir.equals(getExternalStorage());
+    public static boolean isStorage(File dir,Context context) {
+        return dir == null || dir.getPath().equals(getStoragePath(context,false)) || dir.getPath().equals(getStoragePath(context,true));
     }
 
     //----------------------------------------------------------------------------------------------

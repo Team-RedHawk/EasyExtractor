@@ -64,5 +64,11 @@ public class AdapterItems extends ArrayAdapter {
         TextView size;
         TextView data;
     }
+
+    public void refreshEvents(Items[] items) {
+        this.items= null;
+        this.items = items;
+        notifyDataSetChanged();
+    }
 }
 

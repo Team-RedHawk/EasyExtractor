@@ -1,38 +1,42 @@
-package teampanther.developers.easyextractor;
+package teampanther.developers.easyextractor.Fragments;
 
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.ImageButton;
 import android.widget.ListView;
-import android.widget.Toast;
 
 import java.io.File;
-import java.io.FileFilter;
 import java.util.ArrayList;
 import java.util.List;
 
+import teampanther.developers.easyextractor.Explorer;
+import teampanther.developers.easyextractor.FileHelper;
+import teampanther.developers.easyextractor.R;
 
-public class InternalFragment extends Fragment {
+/**
+ * Created by luffynando on 23/01/2018.
+ */
+
+public class StorageFragment extends Fragment{
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
-    static Explorer explorer;
-
+    Explorer explorer;
+    ImageButton back;
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
 
     private OnFragmentInteractionListener mListener;
 
-    public InternalFragment() {
+    public StorageFragment() {
         // Required empty public constructor
     }
 
@@ -42,11 +46,10 @@ public class InternalFragment extends Fragment {
      *
      * @param param1 Parameter 1.
      * @param param2 Parameter 2.
-     * @return A new instance of fragment InternalFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static InternalFragment newInstance(String param1, String param2) {
-        InternalFragment fragment = new InternalFragment();
+    public static StorageFragment newInstance(String param1, String param2) {
+        StorageFragment fragment = new StorageFragment();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
         args.putString(ARG_PARAM2, param2);
@@ -67,13 +70,40 @@ public class InternalFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        View vista = inflater.inflate(R.layout.fragment_internal, container, false);
+        View vista = inflater.inflate(R.layout.fragment_storage, container, false);
         explorer = new Explorer(getContext());
         final ListView lista = (ListView) vista.findViewById(R.id.list_items);//Lista a mostrar carpetas etc
+        final String path;
+        if (getArguments() != null){
+            if (mParam1.equals("SD")){
+                path = FileHelper.getStoragePath(getContext(),true);
+            }else{
+                path = FileHelper.getStoragePath(getContext(),false);
+            }
+        }else{
+            path = FileHelper.getStoragePath(getContext(),false);
+        }
 
-        final String path = Environment.getExternalStorageDirectory().getPath(); //obtengo el path de memoria interna
-
+        // final String path = path1.toString();
+        back= (ImageButton) vista.findViewById(R.id.back_id);
+        back.setVisibility(View.GONE);
+        back.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (explorer.getPathBack() != null){
+                    if (!FileHelper.isStorage(new File(explorer.getPathBack()),getContext())) {
+                        back.setVisibility(View.VISIBLE);
+                    }else{
+                        back.setVisibility(View.GONE);
+                    }
+                    lista.setAdapter(explorer.setItems(explorer.getPathBack()));
+                }else{
+                    back.setVisibility(View.GONE);
+                }
+            }
+        });
         lista.setAdapter(explorer.setItems(path));
+        //
         //metodo para saber que elemento fue seleccionado
         lista.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -90,25 +120,17 @@ public class InternalFragment extends Fragment {
                             ,"Renombrar "+file.getName()
                             ,"Eliminar"});
                 }else{
-
                     String ruta = file.getPath();
+                    back.setVisibility(View.VISIBLE);
                     if (position == 0){
-
-                        lista.setAdapter(explorer.setItems(returnPathBack(file.getPath().toString())));
-
+                        lista.setAdapter(explorer.setItems(returnPathBack(ruta)));
                     }else {
-
                         lista.setAdapter(explorer.setItems(ruta));
                     }
-
-
-                    Toast.makeText(getContext(),ruta,Toast.LENGTH_LONG)
-                            .show();
                 }
 
             }
         });
-
 
         //metodo para saber que item fue presionado
 
@@ -123,6 +145,7 @@ public class InternalFragment extends Fragment {
                 explorer.setDialog(file,new String[]{"Copiar","Cortar","Comprimir "+file.getName()
                         ,"Renombrar "+file.getName()
                         ,"Eliminar"});
+
 
                 return true;
             }
@@ -163,16 +186,12 @@ public class InternalFragment extends Fragment {
     public String returnPathBack (String path){
 
         int c = 0;
-        Toast.makeText(getContext(),"Entra: "+path,Toast.LENGTH_LONG)
-                .show();
         //ciclo que cuenta cuantos > se encuentran en la cadena
         for (int i = 0; i < path.length();i++){
 
             if (path.charAt(i) == '/')
                 c++;
         }
-        Toast.makeText(getContext(),Integer.toString(c),Toast.LENGTH_LONG)
-                .show();
         //ciclo utilizado para eliminar path actual
 
         int o = 0;
@@ -188,9 +207,6 @@ public class InternalFragment extends Fragment {
                 break;
             }
         }
-
-        Toast.makeText(getContext(),"Sale: "+path,Toast.LENGTH_LONG)
-                .show();
         return path;
     }
 

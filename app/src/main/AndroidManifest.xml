@@ -25,11 +25,26 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+            <intent-filter>
+
+                <action
+                    android:name="android.intent.action.GET_CONTENT" />
+
+                <category
+                    android:name="android.intent.category.DEFAULT" />
+
+                <category
+                    android:name="android.intent.category.OPENABLE" />
+
+                <data
+                    android:mimeType="*/*" />
+
+            </intent-filter>
         </activity>
         <activity android:name=".Settings"
             android:parentActivityName=".MainActivity"
             android:label="@string/action_settings"
-            android:windowSoftInputMode="adjustPan">>
+            android:windowSoftInputMode="adjustPan">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".MainActivity" />

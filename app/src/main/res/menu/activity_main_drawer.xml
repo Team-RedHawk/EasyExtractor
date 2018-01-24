@@ -8,7 +8,7 @@
             <menu>
         <item
             android:id="@+id/internal"
-            android:icon="@drawable/ic_sd_storage"
+            android:icon="@drawable/ic_internal"
             android:title="@string/internal" />
         <item
             android:id="@+id/external"

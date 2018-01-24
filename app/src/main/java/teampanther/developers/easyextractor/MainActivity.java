@@ -1,11 +1,18 @@
 package teampanther.developers.easyextractor;
 
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.NavigationView;
+import android.support.design.widget.Snackbar;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -15,40 +22,88 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.content.SharedPreferences;
 import android.content.Context;
+import android.provider.Settings;
+import android.view.View;
 
+import teampanther.developers.easyextractor.Fragments.StorageFragment;
 
 
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener,InternalFragment.OnFragmentInteractionListener
-        ,ExternalFragment.OnFragmentInteractionListener,About.OnFragmentInteractionListener{
+        implements NavigationView.OnNavigationItemSelectedListener,About.OnFragmentInteractionListener,StorageFragment.OnFragmentInteractionListener{
 
     SharedPreferences sharedPreferences;
     SharedPreferences.Editor editor;
+    NavigationView navigationView;
+    CoordinatorLayout coordinatorLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-
         theme();
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         setTitle(getResources().getString(R.string.app_name));
-
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.setDrawerListener(toggle);
         toggle.syncState();
 
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
-        navigationView.setNavigationItemSelectedListener(this);
-        //fragment for default
+        initCoordinatorLayout();
+
+        hideItem();
+
+        cargarFragment();
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+
+        if (requestCode == 0) {
+
+            if (grantResults.length > 0 && grantResults[0] != PackageManager.PERMISSION_GRANTED)
+                Snackbar.make(coordinatorLayout, "Permisos requeridos", Snackbar.LENGTH_INDEFINITE)
+                        .setAction("Ajustes", new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                MainActivity.this.gotoApplicationSettings();
+                            }
+                        })
+                        .show();
+            else {
+               cargarFragment();
+            }
+        }
+
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+    }
+
+
+    private void cargarFragment() {
+        String permission = Manifest.permission.WRITE_EXTERNAL_STORAGE;
+
+        if (PackageManager.PERMISSION_GRANTED != ContextCompat.checkSelfPermission(this, permission)) {
+
+            ActivityCompat.requestPermissions(this, new String[]{permission}, 0);
+
+            return;
+        }
+
         FragmentManager manager = getSupportFragmentManager();
         FragmentTransaction transaction = manager.beginTransaction();
-        InternalFragment fragment = new InternalFragment();
+        StorageFragment fragment = new StorageFragment();
         transaction.add(R.id.contenedor_fragment,fragment).commit();
+    }
 
+    private void hideItem()
+    {
+        navigationView = (NavigationView) findViewById(R.id.nav_view);
+        if (FileHelper.getStoragePath(MainActivity.this,true) == null) {
+            Menu nav_Menu = navigationView.getMenu();
+            nav_Menu.findItem(R.id.external).setVisible(false);
+        }
+        navigationView.setNavigationItemSelectedListener(this);
     }
 
     @Override
@@ -56,9 +111,9 @@ public class MainActivity extends AppCompatActivity
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
-        } else {
-            super.onBackPressed();
+            return;
         }
+        super.onBackPressed();
     }
 
     @Override
@@ -66,6 +121,17 @@ public class MainActivity extends AppCompatActivity
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.main, menu);
         return true;
+    }
+
+    private void gotoApplicationSettings() {
+
+        Intent intent = new Intent();
+
+        intent.setAction(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+
+        intent.setData(Uri.fromParts("package", "teampanther.developers.easyextractor", null));
+
+        startActivity(intent);
     }
 
     @Override
@@ -94,11 +160,10 @@ public class MainActivity extends AppCompatActivity
         FragmentTransaction transaction = manager.beginTransaction();
 
         if (id == R.id.internal) {
-            InternalFragment fragment = new InternalFragment();
+            StorageFragment fragment = new StorageFragment();
             transaction.replace(R.id.contenedor_fragment,fragment);
         } else if (id == R.id.external) {
-
-            ExternalFragment fragment = new ExternalFragment();
+            StorageFragment fragment = StorageFragment.newInstance("SD","");
             transaction.replace(R.id.contenedor_fragment,fragment);
         }  else if (id == R.id.about) {
 
@@ -118,6 +183,12 @@ public class MainActivity extends AppCompatActivity
     public void onFragmentInteraction(Uri uri) {
 
     }
+
+    private void initCoordinatorLayout() {
+
+        coordinatorLayout = (CoordinatorLayout) findViewById(R.id.coordinator_layout);
+    }
+
 
     public void theme() {
                 sharedPreferences = getSharedPreferences("VALUES", Context.MODE_PRIVATE);

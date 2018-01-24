@@ -2,20 +2,30 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="teampanther.developers.easyextractor.ExternalFragment">
+    tools:context="teampanther.developers.easyextractor.Fragments.StorageFragment">
 
     <!-- TODO: Update blank fragment layout -->
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
+        <ImageButton
+            android:id="@+id/back_id"
+            android:layout_width="40dp"
+            android:layout_height="20dp"
+            android:visibility="gone"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:src="@drawable/ic_back" />
+
         <ListView
-            android:id="@+id/list_items_Ext"
+            android:id="@+id/list_items"
+            android:layout_below="@+id/back_id"
             android:layout_width="match_parent"
             android:layout_height="match_parent"/>
 
         <ImageButton
-            android:id="@+id/add_folder1_Ext"
+            android:id="@+id/add_folder"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="@drawable/background_circle"

@@ -3,6 +3,8 @@ package teampanther.developers.easyextractor;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.support.design.widget.Snackbar;
+import android.widget.ImageButton;
 import android.widget.Toast;
 
 import java.io.File;
@@ -11,13 +13,19 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import teampanther.developers.easyextractor.ui.InputDialog;
+
 import static teampanther.developers.easyextractor.FileHelper.getImageResource;
+import static teampanther.developers.easyextractor.FileHelper.removeExtension;
+import static teampanther.developers.easyextractor.FileHelper.renameFile;
 
 public class Explorer {
 
     Context context;
     List pathFiles;
     String rootPath;
+    String backPath;
+    AdapterItems adapter;
 
     public Explorer(Context context)
     {
@@ -26,16 +34,19 @@ public class Explorer {
     }
 
     public AdapterItems setItems(String path){
-
+        rootPath= path;
         File directorio = new File(path);
+        if (!FileHelper.isStorage(directorio,context)){
+            backPath = directorio.getParent();
+        }else{
+            backPath = null;
+        }
         File[] files = directorio.listFiles();
         pathFiles = new ArrayList();
         List pathFolders = new ArrayList();
         List nameFiles = new ArrayList();
         List sizeFiles = new ArrayList();
         List metadata = new ArrayList();
-
-        //Llamamos agregamos decisor para mostrar carpeta anterior
 
         /*IMPORTANTE LEER:
           en esta parte es donde tienes que implementar algun metodo para poder
@@ -55,8 +66,7 @@ public class Explorer {
         }
 
         if (files.length < 1){
-
-            Toast.makeText(context,"No existen Archivos para mostrar",Toast.LENGTH_LONG).show();
+            showMessage("No existen Archivos para mostrar");
         }
 
 
@@ -121,9 +131,98 @@ public class Explorer {
         }
 
         pathFiles = pathFolders;
-        AdapterItems adapter = new AdapterItems(context,R.layout.explorer_layout,items);
+        adapter = new AdapterItems(context,R.layout.explorer_layout,items);
 
         return adapter;
+    }
+
+    public Items[] getitemupdate(){
+        File directorio = new File(rootPath);
+        File[] files = directorio.listFiles();
+        pathFiles= null;
+        pathFiles = new ArrayList();
+        List pathFolders = new ArrayList();
+        List nameFiles = new ArrayList();
+        List sizeFiles = new ArrayList();
+        List metadata = new ArrayList();
+        for (File archivo:files){
+
+            if (archivo.isFile() && !archivo.getName().equals(".android_secure")){
+
+                pathFiles.add(archivo.getPath());
+
+            }else if(!archivo.getName().equals(".android_secure")) {
+
+                pathFolders.add(archivo.getPath());
+            }
+        }
+
+        if (files.length < 1){
+            showMessage("No existen Archivos para mostrar");
+        }
+
+
+        //ordeno paths en forma ascendente
+
+        Collections.sort(pathFiles,String.CASE_INSENSITIVE_ORDER);
+        Collections.sort(pathFolders,String.CASE_INSENSITIVE_ORDER);
+
+        //ahora agrego paths de folders a path de archivos
+
+        for (int i = 0;i < pathFiles.size();i++){
+
+            pathFolders.add(pathFiles.get(i));
+        }
+
+        //lleno array adapter para mostrar en lista
+        Items[] items2 = new Items[pathFolders.size()];
+
+        for (int i = 0; i < pathFolders.size();i++){
+
+            int image;
+
+            File file = new File(pathFolders.get(i).toString());
+            nameFiles.add(file.getName());
+            sizeFiles.add(file.length()); // Optengo el peso
+            // del fichero en Bytes
+            metadata.add(file.lastModified());
+
+
+            //Remplazo esto por uno mejor estructurado
+            /*
+            if (file.isFile()){
+
+                String name = file.getName(); //nombre del archivo
+                int begin = name.length()-3; //Empiezo de substring
+                int end = begin+3;
+                //en caso que sea una imagen
+
+                if ((name.substring(begin,end).toLowerCase().equals("jpg")) || (name.substring(begin,end).toLowerCase().equals("png"))){
+
+                    image = R.drawable.ic_image;
+                }else if (name.substring(begin,end).toLowerCase().equals("apk")){
+
+                    image = R.drawable.ic_apk;
+                }else{
+
+                    image = R.drawable.ic_file;
+                } if (name.substring(begin,end).toLowerCase().equals("img")){
+                    image = R.drawable.ic_img;
+
+                }
+
+            }else {
+
+                image = R.drawable.ic_folder;
+            }*/
+
+            //Esta linea ahora obtiene la imagen correspondiente
+            image= getImageResource(file);
+
+            items2[i] = new Items(image,nameFiles.get(i).toString(),sizeFiles.get(i).toString(), (Long) metadata.get(i));
+        }
+        pathFiles = pathFolders;
+        return items2;
     }
 
     public List getPathFiles(){
@@ -131,9 +230,13 @@ public class Explorer {
         return pathFiles;
     }
 
+    public String getPathBack(){
+        return backPath;
+    }
+
     //Este es un procedimiento que lo que hace es mostrar al mantener presionado un item
     //distitas opciones como eliminar etc etc
-    public void setDialog(File file,final String[] items){
+    public void setDialog(final File file, final String[] items){
 
         //seteo de imagen a mostrar para archivo
         int icon;
@@ -189,6 +292,7 @@ public class Explorer {
                         break;
                     case 3:
                         //renombrar
+                        actionRename(file);
                         break;
                     case 4:
                         //eliminar
@@ -199,5 +303,34 @@ public class Explorer {
         });
         builder.create().show();
     }
+
+    private void actionRename(final File file) {
+
+        final InputDialog inputDialog = new InputDialog(context, "Renombrar", "Renombrar") {
+
+            @Override
+            public void onActionClick(String text) {
+                try {
+                        renameFile(file, text);
+                        adapter.refreshEvents(getitemupdate());
+                }
+                catch (Exception e) {
+                    showMessage(e);
+                }
+            }
+        };
+        inputDialog.setDefault(removeExtension(file.getName()));
+        inputDialog.show();
+    }
+
+    private void showMessage(Exception e) {
+        showMessage(e.getMessage());
+    }
+
+    private void showMessage(String message) {
+        Toast.makeText(context,message,Toast.LENGTH_LONG).show();
+    }
+
+
 
 }
