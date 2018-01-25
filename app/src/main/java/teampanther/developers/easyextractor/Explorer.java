@@ -21,11 +21,11 @@ import static teampanther.developers.easyextractor.FileHelper.renameFile;
 
 public class Explorer {
 
-    Context context;
-    List pathFiles;
-    String rootPath;
-    String backPath;
-    AdapterItems adapter;
+    private Context context;
+    private List pathFiles;
+    private String rootPath;
+    private String backPath;
+    private AdapterItems adapter;
 
     public Explorer(Context context)
     {
@@ -83,7 +83,8 @@ public class Explorer {
         }
 
         //lleno array adapter para mostrar en lista
-        Items[] items = new Items[pathFolders.size()];
+        //Items[] items = new Items[pathFolders.size()];
+        ArrayList<Items> test= new ArrayList<>();
 
         for (int i = 0; i < pathFolders.size();i++){
 
@@ -95,51 +96,26 @@ public class Explorer {
                                          // del fichero en Bytes
             metadata.add(file.lastModified());
 
-
-            //Remplazo esto por uno mejor estructurado
-            /*
-            if (file.isFile()){
-
-                String name = file.getName(); //nombre del archivo
-                int begin = name.length()-3; //Empiezo de substring
-                int end = begin+3;
-                //en caso que sea una imagen
-
-                if ((name.substring(begin,end).toLowerCase().equals("jpg")) || (name.substring(begin,end).toLowerCase().equals("png"))){
-
-                    image = R.drawable.ic_image;
-                }else if (name.substring(begin,end).toLowerCase().equals("apk")){
-
-                    image = R.drawable.ic_apk;
-                }else{
-
-                    image = R.drawable.ic_file;
-                } if (name.substring(begin,end).toLowerCase().equals("img")){
-                    image = R.drawable.ic_img;
-
-                }
-
-            }else {
-
-                image = R.drawable.ic_folder;
-            }*/
-
             //Esta linea ahora obtiene la imagen correspondiente
             image= getImageResource(file);
 
-            items[i] = new Items(image,nameFiles.get(i).toString(),sizeFiles.get(i).toString(), (Long) metadata.get(i));
+            test.add(new Items(image,nameFiles.get(i).toString(),sizeFiles.get(i).toString(), (Long) metadata.get(i)));
         }
 
         pathFiles = pathFolders;
-        adapter = new AdapterItems(context,R.layout.explorer_layout,items);
+        adapter = new AdapterItems(context,R.layout.explorer_layout,test);
 
         return adapter;
     }
 
-    public Items[] getitemupdate(){
+    public ArrayList<Items> getitemupdate(){
         File directorio = new File(rootPath);
+        if (!FileHelper.isStorage(directorio,context)){
+            backPath = directorio.getParent();
+        }else{
+            backPath = null;
+        }
         File[] files = directorio.listFiles();
-        pathFiles= null;
         pathFiles = new ArrayList();
         List pathFolders = new ArrayList();
         List nameFiles = new ArrayList();
@@ -175,8 +151,8 @@ public class Explorer {
         }
 
         //lleno array adapter para mostrar en lista
-        Items[] items2 = new Items[pathFolders.size()];
-
+        //Items[] items2 = new Items[pathFolders.size()];
+        ArrayList<Items> test= new ArrayList<>();
         for (int i = 0; i < pathFolders.size();i++){
 
             int image;
@@ -219,15 +195,19 @@ public class Explorer {
             //Esta linea ahora obtiene la imagen correspondiente
             image= getImageResource(file);
 
-            items2[i] = new Items(image,nameFiles.get(i).toString(),sizeFiles.get(i).toString(), (Long) metadata.get(i));
+            test.add(new Items(image,nameFiles.get(i).toString(),sizeFiles.get(i).toString(), (Long) metadata.get(i)));
         }
         pathFiles = pathFolders;
-        return items2;
+        return test;
     }
 
     public List getPathFiles(){
 
         return pathFiles;
+    }
+
+    public String getRootPath(){
+        return rootPath;
     }
 
     public String getPathBack(){
@@ -323,11 +303,11 @@ public class Explorer {
         inputDialog.show();
     }
 
-    private void showMessage(Exception e) {
+    public void showMessage(Exception e) {
         showMessage(e.getMessage());
     }
 
-    private void showMessage(String message) {
+    public void showMessage(String message) {
         Toast.makeText(context,message,Toast.LENGTH_LONG).show();
     }
 

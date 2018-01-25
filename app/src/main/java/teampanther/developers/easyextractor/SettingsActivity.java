@@ -13,7 +13,7 @@ import android.widget.CompoundButton;
 import android.widget.Switch;
 import android.widget.Toast;
 
-public class Settings extends AppCompatActivity {
+public class SettingsActivity extends AppCompatActivity {
     SharedPreferences sharedPreferences;
     SharedPreferences.Editor editor;
     public int theme;
@@ -63,7 +63,7 @@ public class Settings extends AppCompatActivity {
                         sharedPreferences.edit().putBoolean("THEMECHANGED", true).apply();
                         int duration = Toast.LENGTH_SHORT;
 
-                        Toast toast = Toast.makeText(Settings.this, Integer.toString(theme), duration);
+                        Toast toast = Toast.makeText(SettingsActivity.this, Integer.toString(theme), duration);
                         toast.show();
                         settingThemeElection(theme);
                     }
@@ -83,7 +83,7 @@ public class Settings extends AppCompatActivity {
         //noinspection SimplifiableIfStatement
         if (id == android.R.id.home) {
             if (!homeButton) {
-                NavUtils.navigateUpFromSameTask(Settings.this);
+                NavUtils.navigateUpFromSameTask(SettingsActivity.this);
             }
             if (homeButton) {
                 if (!themeChanged) {
@@ -91,7 +91,7 @@ public class Settings extends AppCompatActivity {
                     editor.putBoolean("DOWNLOAD", false);
                     editor.apply();
                 }
-                Intent intent = new Intent(Settings.this, MainActivity.class);
+                Intent intent = new Intent(SettingsActivity.this, MainActivity.class);
                 startActivity(intent);
             }
             return true;
@@ -109,7 +109,7 @@ public class Settings extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        Intent intent = new Intent(Settings.this, MainActivity.class);
+        Intent intent = new Intent(SettingsActivity.this, MainActivity.class);
         startActivity(intent);
     }
 
@@ -149,7 +149,7 @@ public class Settings extends AppCompatActivity {
             default:
                 editor = sharedPreferences.edit();
                 editor.putInt("THEME", 1).apply();
-                reiniciarActivity(Settings.this);
+                reiniciarActivity(SettingsActivity.this);
                 break;
         }
     }

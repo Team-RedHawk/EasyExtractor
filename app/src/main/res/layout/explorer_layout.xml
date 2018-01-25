@@ -14,13 +14,12 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
-
             <ImageView
                 android:id="@+id/folder_file"
                 android:layout_width="45dp"
                 android:layout_height="45dp"
                 android:src="@drawable/ic_folder"
-                android:layout_marginLeft="5dp"
+                android:layout_marginStart="5dp"
                 />
             <LinearLayout
                 android:layout_width="match_parent"
@@ -32,7 +31,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:gravity="center"
-                    android:layout_marginLeft="20dp"
+                    android:layout_marginStart="20dp"
                     android:textAppearance="?attr/textAppearanceListItem"
                     android:singleLine="true"
                     android:text="Prueba de archivo" />
@@ -45,7 +44,7 @@
                         android:id="@+id/metaData"
                         android:layout_width="167dp"
                         android:layout_height="wrap_content"
-                        android:layout_marginLeft="20dp"
+                        android:layout_marginStart="20dp"
                         android:gravity="left"
                         android:singleLine="true"
                         android:text="Meta-data"
@@ -56,7 +55,7 @@
                         android:id="@+id/sizeFile"
                         android:layout_width="119dp"
                         android:layout_height="wrap_content"
-                        android:layout_marginLeft="20dp"
+                        android:layout_marginStart="20dp"
                         android:gravity="center"
                         android:singleLine="true"
                         android:text="0 kb"

@@ -1,13 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
     <item android:id="@+id/eliminar"
-        android:title="@string/delete" />
+        android:title="@string/delete"
+        app:showAsAction="ifRoom"/>
     <item android:id="@+id/copiar"
-        android:title="@string/copy" />
+        android:title="@string/copy"
+        app:showAsAction="ifRoom"/>
     <item android:id="@+id/cortar"
-        android:title="@string/cut" />
+        android:title="@string/cut"
+        app:showAsAction="ifRoom"/>
     <item android:id="@+id/comprimir"
-        android:title="@string/zip" />
+        android:title="@string/zip"
+        app:showAsAction="ifRoom"/>
     <item android:id="@+id/renombrar"
-        android:title="@string/rename" />
+        android:title="@string/rename"
+        app:showAsAction="ifRoom"/>
+
 </menu>
