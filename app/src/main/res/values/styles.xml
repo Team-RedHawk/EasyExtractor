@@ -1,49 +1,55 @@
 <resources>
 
     <!-- Base application theme. -->
-    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimary</item>
         <item name="colorAccent">@color/colorAccent</item>
-        <!-- Ajustando Toolbar. -->
-        <!--  It should be true otherwise action mode will not overlay toolbar -->
-        <item name="windowActionModeOverlay">true</item>
-        <!--  For Custom Action Mode Background Color/Drawable -->
-        <item name="actionModeBackground">@color/colorPrimary</item>
-        <item name="windowActionBar">false</item>
-        <item name="windowNoTitle">true</item>
+        <item name="colorAccentLight">@color/colorAccentLight</item>
+        <item name="colorSelected">#80B2EBF2</item>
     </style>
 
     <!-- Tema 2. -->
-    <style name="AppTheme2" parent="Theme.AppCompat.Light.DarkActionBar">
+    <style name="AppTheme2" parent="Theme.AppCompat.Light.NoActionBar">
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/colorPrimaryTheme2</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDarkTheme2</item>
         <item name="colorAccent">@color/colorAccentTheme2</item>
-        <!-- Ajustando Toolbar. -->
-        <!--  It should be true otherwise action mode will not overlay toolbar -->
-        <item name="windowActionModeOverlay">true</item>
-        <!--  For Custom Action Mode Background Color/Drawable -->
-        <item name="actionModeBackground">@color/colorPrimaryTheme2</item>
-        <item name="windowActionBar">false</item>
-        <item name="windowNoTitle">true</item>
+        <item name="colorAccentLight">@color/colorAccentLight</item>
+        <item name="colorSelected">#80B2EBF2</item>
+    </style>
+    <style name="Text">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:singleLine">true</item>
     </style>
 
-    <style name="AppTheme.NoActionBar">
-        <item name="windowActionBar">false</item>
-        <item name="windowNoTitle">true</item>
+    <style name="Text.Body1" >
+        <item name="android:textAppearance">@style/TextAppearance.AppCompat.Body1</item>
+        <item name="android:textColor">?android:textColorSecondary</item>
     </style>
 
-    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
-
-    <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
-
-    <style name="AppTheme.pop">
-        <item name="android:windowIsTranslucent">true</item>
-        <item name="android:windowCloseOnTouchOutside">true</item>
-
+    <style name="Text.Headline" >
+        <item name="android:textAppearance">@style/TextAppearance.AppCompat.Headline</item>
+        <item name="android:textColor">?android:textColorPrimary</item>
     </style>
 
+    <style name="Text.Subhead" >
+        <item name="android:textAppearance">@style/TextAppearance.AppCompat.Subhead</item>
+        <item name="android:textColor">?android:textColorPrimary</item>
+    </style>
+
+    <style name="Text.Body1.Inverse" >
+        <item name="android:textColor">?android:textColorSecondaryInverse</item>
+    </style>
+
+    <style name="Text.Headline.Inverse" >
+        <item name="android:textColor">?android:textColorPrimaryInverse</item>
+    </style>
+
+    <style name="Text.Subhead.Inverse" >
+        <item name="android:textColor">?android:textColorPrimaryInverse</item>
+    </style>
 
 </resources>

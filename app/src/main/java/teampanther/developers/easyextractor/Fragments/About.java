@@ -1,4 +1,4 @@
-package teampanther.developers.easyextractor;
+package teampanther.developers.easyextractor.Fragments;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -19,6 +19,7 @@ import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
+import teampanther.developers.easyextractor.R;
 
 
 public class About extends Fragment {

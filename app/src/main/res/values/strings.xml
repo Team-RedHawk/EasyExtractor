@@ -19,4 +19,10 @@
     <string name="enablerootaccess">Enabled Root Access</string>
     <string name="theme">Theme</string>
     <string name="dark">Dark</string>
+    <string name="Copyright">Copyright © 2017-2018</string>
+    <string name="buscar">Search</string>
+    <string name="move">Move</string>
+    <string name="send">Send</string>
+    <string name="action_sort">Sort</string>
+    <string name="Compress">Compress</string>
 </resources>

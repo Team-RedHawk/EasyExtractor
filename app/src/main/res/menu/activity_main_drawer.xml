@@ -18,13 +18,19 @@
         </item>
     </group>
 
-    <item android:title="@string/contact">
-        <menu>
-            <item
-                android:id="@+id/about"
-                android:icon="@drawable/ic_info"
-                android:title="@string/about" />
-        </menu>
-    </item>
+    <group
+        android:id="@+id/navigation_group3" >
+
+        <item
+            android:id="@+id/navigation_settings"
+            android:icon="@drawable/ic_settings"
+            android:title="@string/action_settings" />
+
+        <item
+            android:id="@+id/about"
+            android:icon="@drawable/ic_info"
+            android:title="@string/about" />
+
+    </group>
 
 </menu>

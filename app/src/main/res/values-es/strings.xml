@@ -18,4 +18,10 @@
     <string name="app_name">Easy Extractor</string>
     <string name="navigation_drawer_open">Open navigation</string>
     <string name="navigation_drawer_close">Close  navigation</string>
+    <string name="Copyright">Copyright © 2017-2018</string>
+    <string name="buscar">Buscar</string>
+    <string name="move">Mover</string>
+    <string name="send">Enviar</string>
+    <string name="action_sort">Ordenar</string>
+    <string name="Compress">Comprimir</string>
 </resources>

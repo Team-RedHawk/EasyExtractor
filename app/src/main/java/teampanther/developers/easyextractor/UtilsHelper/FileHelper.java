@@ -1,11 +1,14 @@
-package teampanther.developers.easyextractor;
+package teampanther.developers.easyextractor.UtilsHelper;
 
 /**
  * Created by malcolmx on 28/12/17.
  */
 
 import android.content.Context;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
+import android.graphics.drawable.Drawable;
 import android.media.MediaMetadataRetriever;
 import android.net.Uri;
 import android.os.Environment;
@@ -21,7 +24,6 @@ import java.io.File;
 import java.io.FileFilter;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.lang.reflect.Array;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -30,7 +32,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
-import java.util.zip.ZipOutputStream;
+
+import teampanther.developers.easyextractor.R;
 
 public class FileHelper {
 
@@ -61,7 +64,7 @@ public class FileHelper {
         }
         catch (Exception e) {
 
-            throw new Exception(String.format("Error copying %s", src.getName()));
+            throw new Exception(String.format("Error copiando %s", src.getName()));
         }
     }
 
@@ -73,9 +76,9 @@ public class FileHelper {
 
         if (directory.mkdirs()) return directory;
 
-        if (directory.exists()) throw new Exception(String.format("%s already exists", name));
+        if (directory.exists()) throw new Exception(String.format("%s ya existe", name));
 
-        throw new Exception(String.format("Error creating %s", name));
+        throw new Exception(String.format("Error creando %s", name));
     }
 
     public static File deleteFile(File file) throws Exception {
@@ -90,7 +93,7 @@ public class FileHelper {
 
         if (file.delete()) return file;
 
-        throw new Exception(String.format("Error deleting %s", file.getName()));
+        throw new Exception(String.format("Error eliminando %s", file.getName()));
     }
 
     public static File renameFile(File file, String name) throws Exception {
@@ -103,7 +106,7 @@ public class FileHelper {
 
         if (file.renameTo(newFile)) return newFile;
 
-        throw new Exception(String.format("Error renaming %s", file.getName()));
+        throw new Exception(String.format("Error renombrando %s", file.getName()));
     }
 
     public static File unzip(File zip) throws Exception {
@@ -126,7 +129,7 @@ public class FileHelper {
 
                 if (zipEntry.isDirectory()) {
 
-                    if (!file.mkdirs()) throw new Exception("Error uncompressing");
+                    if (!file.mkdirs()) throw new Exception("Error descomprimiendo");
                 }
                 else {
 
@@ -258,7 +261,7 @@ public class FileHelper {
 
             if (children == null) return null;
 
-            return String.format("%s items", children.length);
+            return String.format("%s archivos", children.length);
         }
         else {
 
@@ -287,7 +290,7 @@ public class FileHelper {
 
         String tot = Formatter.formatShortFileSize(context, t);
 
-        return String.format("%s used of %s", use, tot);
+        return String.format("%s usados de %s", use, tot);
     }
 
     public static String getTitle(File file) {
@@ -391,7 +394,10 @@ public class FileHelper {
                 return R.drawable.ic_zip;
 
             case APK:
-                return  R.drawable.ic_apk;
+                return R.drawable.ic_apk;
+
+            case IMG:
+                return R.drawable.ic_img_file;
 
             default:
                 return 0;
@@ -446,7 +452,7 @@ public class FileHelper {
 
     public enum FileType {
 
-        DIRECTORY, MISC_FILE, AUDIO, IMAGE, VIDEO, DOC, PPT, XLS, PDF, TXT, ZIP, APK;
+        DIRECTORY, MISC_FILE, AUDIO, IMAGE, VIDEO, DOC, PPT, XLS, PDF, TXT, ZIP, APK, IMG;
 
         public static FileType getFileType(File file) {
 
@@ -502,6 +508,12 @@ public class FileHelper {
 
             if (mime.startsWith("application/vnd.android.package-archive"))
                 return  FileType.APK;
+
+            if (mime.startsWith("application/x-img"))
+                return FileType.IMG;
+
+            if (mime.startsWith("image/img"))
+                return FileType.IMG;
 
             return FileType.MISC_FILE;
         }
