@@ -3,6 +3,7 @@ package teampanther.developers.easyextractor;
 import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -19,6 +20,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
@@ -31,9 +33,10 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import teampanther.developers.easyextractor.Dialogs.About_dialog;
 import teampanther.developers.easyextractor.RecyclerView.Adapter;
 import teampanther.developers.easyextractor.RecyclerView.OnItemSelectedListener;
-import teampanther.developers.easyextractor.ui.InputDialog;
+import teampanther.developers.easyextractor.Dialogs.InputDialog;
 import teampanther.developers.easyextractor.UtilsHelper.FileHelper;
 import teampanther.developers.easyextractor.UtilsHelper.PreferenceUtil;
 
@@ -54,6 +57,7 @@ public class MainActivity extends AppCompatActivity {
     private static final String EXTRA_NAME = "teampanther.developers.easyextractor.EXTRA_NAME";
 
     private static final String EXTRA_TYPE = "teampanther.developers.easyextractor.EXTRA_TYPE";
+
     private SharedPreferences sharedPreferences;
     private SharedPreferences.Editor editor;
     private NavigationView navigationView;
@@ -80,150 +84,8 @@ public class MainActivity extends AppCompatActivity {
         initRecyclerView();
         loadIntoRecyclerView();
         invalidateToolbar();
-
         invalidateTitle();
-
-        //hideItem();
-
-        //cargarFragment();
     }
-
-    /*
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-
-        if (requestCode == 0) {
-
-            if (grantResults.length > 0 && grantResults[0] != PackageManager.PERMISSION_GRANTED)
-                Snackbar.make(coordinatorLayout, "Permisos requeridos", Snackbar.LENGTH_INDEFINITE)
-                        .setAction("Ajustes", new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                MainActivity.this.gotoApplicationSettings();
-                            }
-                        })
-                        .show();
-            else {
-               cargarFragment();
-            }
-        }
-
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-    }
-
-    private void initActivityFromIntent() {
-        name = getIntent().getStringExtra(EXTRA_NAME);
-        type = getIntent().getStringExtra(EXTRA_TYPE);
-    }
-
-
-    private void cargarFragment() {
-        String permission = Manifest.permission.WRITE_EXTERNAL_STORAGE;
-
-        if (PackageManager.PERMISSION_GRANTED != ContextCompat.checkSelfPermission(this, permission)) {
-
-            ActivityCompat.requestPermissions(this, new String[]{permission}, 0);
-
-            return;
-        }
-
-        FragmentManager manager = getSupportFragmentManager();
-        FragmentTransaction transaction = manager.beginTransaction();
-        StorageFragment fragment = new StorageFragment();
-        transaction.add(R.id.contenedor_fragment,fragment).commit();
-    }
-
-    private void hideItem()
-    {
-        navigationView = (NavigationView) findViewById(R.id.nav_view);
-        if (FileHelper.getStoragePath(MainActivity.this,true) == null) {
-            Menu nav_Menu = navigationView.getMenu();
-            nav_Menu.findItem(R.id.external).setVisible(false);
-        }
-        navigationView.setNavigationItemSelectedListener(this);
-    }
-
-    @Override
-    public void onBackPressed() {
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        if (drawer.isDrawerOpen(GravityCompat.START)) {
-            drawer.closeDrawer(GravityCompat.START);
-            return;
-        }
-        super.onBackPressed();
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.main, menu);
-        return true;
-    }
-
-    private void gotoApplicationSettings() {
-
-        Intent intent = new Intent();
-
-        intent.setAction(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
-
-        intent.setData(Uri.fromParts("package", "teampanther.developers.easyextractor", null));
-
-        startActivity(intent);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            Intent intent = new Intent(MainActivity.this, SettingsActivity.class);
-            startActivity(intent);
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
-
-    @SuppressWarnings("StatementWithEmptyBody")
-    @Override
-    public boolean onNavigationItemSelected(MenuItem item) {
-        // Handle navigation view item clicks here.
-        int id = item.getItemId();
-        //Fragment transaction and more
-        FragmentManager manager = getSupportFragmentManager();
-        FragmentTransaction transaction = manager.beginTransaction();
-
-        if (id == R.id.internal) {
-            StorageFragment fragment = new StorageFragment();
-            transaction.replace(R.id.contenedor_fragment,fragment);
-        } else if (id == R.id.external) {
-            StorageFragment fragment = StorageFragment.newInstance("SD","");
-            transaction.replace(R.id.contenedor_fragment,fragment);
-        }  else if (id == R.id.about) {
-
-            About fragment = new About();
-            transaction.replace(R.id.contenedor_fragment,fragment);
-        }
-
-
-        transaction.commit();
-        //end Fragment transaction and more
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        drawer.closeDrawer(GravityCompat.START);
-        return true;
-    }
-
-    @Override
-    public void onFragmentInteraction(Uri uri) {
-
-    }
-
-    private void initCoordinatorLayout() {
-        coordinatorLayout = (CoordinatorLayout) findViewById(R.id.coordinator_layout);
-    }*/
 
     @Override
     public void onBackPressed() {
@@ -242,7 +104,7 @@ public class MainActivity extends AppCompatActivity {
             return;
         }
 
-        if (!FileHelper.isStorage(currentDirectory,this)) {
+        if (!isStorage(currentDirectory,this)) {
 
             setPath(currentDirectory.getParentFile());
 
@@ -346,6 +208,10 @@ public class MainActivity extends AppCompatActivity {
                 actionSend();
                 return true;
 
+            case R.id.action_compress:
+                actionZip();
+                return true;
+
             case R.id.action_sort:
                 actionSort();
                 return true;
@@ -435,27 +301,29 @@ public class MainActivity extends AppCompatActivity {
 
         MenuItem menuItem = navigationView.getMenu().findItem(R.id.external);
 
-        menuItem.setVisible(FileHelper.getStoragePath(MainActivity.this,true) != null);
+        menuItem.setVisible(getStoragePath(MainActivity.this,true) != null);
 
         navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                //switch with not remplaze others
+
+                drawerLayout.closeDrawers();
+
                 switch (item.getItemId()) {
                     case R.id.internal:
                         setPath(getInternalStorage());
                         return true;
 
                     case R.id.external:
-                        setPath(new File(FileHelper.getStoragePath(MainActivity.this, true)));
+                        setPath(new File(getStoragePath(MainActivity.this, true)));
                         return true;
 
                     case R.id.about:
+                        FragmentManager fragmentManager = getSupportFragmentManager();
+                        About_dialog dialog = new About_dialog();
+                        dialog.show(fragmentManager, "About_Dialog");
                         return true;
-                }
-
-                drawerLayout.closeDrawers();
-
-                switch (item.getItemId()) {
 
                 /*case R.id.navigation_directory_0:
                     setPath(getPublicDirectory("DCIM"));
@@ -516,7 +384,7 @@ public class MainActivity extends AppCompatActivity {
 
         if (name != null) {
 
-            adapter.addAll(FileHelper.searchFilesName(context, name));
+            adapter.addAll(searchFilesName(context, name));
 
             return;
         }
@@ -731,7 +599,7 @@ public class MainActivity extends AppCompatActivity {
 
         adapter.clearSelection();
 
-        adapter.addAll(FileHelper.getChildren(directory));
+        adapter.addAll(getChildren(directory));
 
         invalidateTitle();
     }
@@ -772,7 +640,7 @@ public class MainActivity extends AppCompatActivity {
             public void onActionClick(String text) {
 
                 try {
-                    File directory = FileHelper.createDirectory(currentDirectory, text);
+                    File directory = createDirectory(currentDirectory, text);
 
                     adapter.clearSelection();
 
@@ -856,7 +724,7 @@ public class MainActivity extends AppCompatActivity {
 
                         int index = adapter.indexOf(file);
 
-                        adapter.updateItemAt(index, FileHelper.renameFile(file, text));
+                        adapter.updateItemAt(index, renameFile(file, text));
                     }
                     else {
 
@@ -870,7 +738,7 @@ public class MainActivity extends AppCompatActivity {
 
                             int index = adapter.indexOf(file);
 
-                            File newFile = FileHelper.renameFile(file, text + String.format(format, i + 1));
+                            File newFile = renameFile(file, text + String.format(format, i + 1));
 
                             adapter.updateItemAt(index, newFile);
                         }
@@ -923,11 +791,44 @@ public class MainActivity extends AppCompatActivity {
         transferFiles(selectedItems, true);
     }
 
+    private void actionZip(){
+        InputDialog inputDialog = new InputDialog(this, "Comprimir", "Nombre de Archivo nuevo") {
+            @Override
+            public void onActionClick(final String text) {
+                final List<File> selecteditems= adapter.getSelectedItems();
+                adapter.clearSelection();
+                final ProgressDialog dialog = ProgressDialog.show(MainActivity.this, "", "Comprimiendo", true);
+                Thread t= new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        String nuevoPath= currentDirectory.getAbsolutePath()+File.separator+text+".zip";
+                            if(FileHelper.zipFileAtPath(selecteditems,nuevoPath)){
+                                runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    setPath(currentDirectory);
+                                    dialog.dismiss();
+                                }
+                                });
+                            }else{
+                               dialog.dismiss();
+                               MainActivity.this.showMessage("Error al comprimir el archivo");
+                            }
+
+                    }
+                });
+                t.start();
+            }
+        };
+
+        inputDialog.show();
+    }
+
     private void actionSend() {
 
-        Intent intent = new Intent(Intent.ACTION_SEND_MULTIPLE);
+        Intent intente = new Intent(Intent.ACTION_SEND_MULTIPLE);
 
-        intent.setType("*/*");
+        intente.setType("*/*");
 
         ArrayList<Uri> uris = new ArrayList<>();
 
@@ -936,9 +837,9 @@ public class MainActivity extends AppCompatActivity {
             if (file.isFile()) uris.add(Uri.fromFile(file));
         }
 
-        intent.putParcelableArrayListExtra(Intent.EXTRA_STREAM, uris);
+        intente.putParcelableArrayListExtra(Intent.EXTRA_STREAM, uris);
 
-        startActivity(intent);
+        startActivity(intente);
     }
 
     private void actionSort() {
@@ -984,7 +885,7 @@ public class MainActivity extends AppCompatActivity {
 
                     for (File file : files) {
 
-                        adapter.addAll(FileHelper.copyFile(file, currentDirectory));
+                        adapter.addAll(copyFile(file, currentDirectory));
 
                         if (delete) FileHelper.deleteFile(file);
                     }
@@ -1004,6 +905,7 @@ public class MainActivity extends AppCompatActivity {
 
     //--End Actions -->
 
+    //Creamos la clase xD
     private final class OnItemClickListener implements teampanther.developers.easyextractor.RecyclerView.OnItemClickListener {
 
         private final Context context;
@@ -1049,33 +951,33 @@ public class MainActivity extends AppCompatActivity {
                     finish();
                 }
                 else if (FileType.getFileType(file) == FileType.ZIP) {
-
-                    /*final ProgressDialog dialog = ProgressDialog.show(context, "", "Unzipping", true);
-
-                    Thread thread = new Thread(new Runnable() {
+                    //final ProgressDialog dialog = ProgressDialog.show(context, "", "Descomprimiendo", true);
+                    final ProgressDialog dialog = ProgressDialog.show(context, "", "Descomprimiendo", true);
+                    Thread t= new Thread(new Runnable() {
                         @Override
                         public void run() {
-
                             try {
-
-                                MainActivity.this.setPath(unzip(file));
-
-                                MainActivity.this.runOnUiThread(new Runnable() {
+                                final File nueva= unzip(file);
+                                runOnUiThread(new Runnable() {
                                     @Override
                                     public void run() {
+                                        setPath(nueva);
                                         dialog.dismiss();
                                     }
                                 });
-                            } catch (Exception e) {
-
-                                MainActivity.this.showMessage(e);
                             }
+                            catch (Exception e) {
+                                showMessage(e);
+                            }
+
                         }
                     });
+                    t.start();
 
-                    thread.run();*/
                 }
-                else {
+                else if(getExtension(file.getName()).equals("img")){
+                    //showMessage(FileHelper.getMimeType(file));
+                }else {
 
                     try {
 
@@ -1087,7 +989,7 @@ public class MainActivity extends AppCompatActivity {
                     }
                     catch (Exception e) {
 
-                        showMessage(String.format("No podemos abrir %s", getName(file)));
+                        showMessage(String.format("No hay aplicacion para abrir %s", getName(file)));
                     }
                 }
             }

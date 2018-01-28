@@ -8,6 +8,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.Switch;
@@ -18,6 +19,7 @@ public class SettingsActivity extends AppCompatActivity {
     SharedPreferences.Editor editor;
     public int theme;
     Boolean homeButton = false, themeChanged;
+    Switch root, size, hide, date;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,6 +36,9 @@ public class SettingsActivity extends AppCompatActivity {
         sharedPreferences = this.getSharedPreferences("VALUES", Context.MODE_PRIVATE);
 
         final Switch _switch = (Switch) findViewById(R.id.darkTheme);
+
+        // Declaramos en esta parte los botones para ajustes.
+        settingsButtons();
 
         if (sharedPreferences.getInt("THEME", 1) == 2){
             _switch.setChecked(true);
@@ -168,5 +173,67 @@ public class SettingsActivity extends AppCompatActivity {
         //finalizamos la actividad actual
         actividad.finish();
     }
+
+    private void settingsButtons() {
+        hide = (Switch) findViewById(R.id.hide_extension);
+        hide.setChecked(sharedPreferences.getBoolean("HIDEEXTENSIONS",true));
+        hide.setOnCheckedChangeListener(
+                new CheckBox.OnCheckedChangeListener() {
+                    public void onCheckedChanged(CompoundButton buttonView,
+                                                 boolean isChecked) {
+                        if(isChecked){
+                            editor = sharedPreferences.edit();
+                            editor.putBoolean("HIDEEXTENSIONS",true).apply();
+                        }else{
+                            editor = sharedPreferences.edit();
+                            editor.putBoolean("HIDEEXTENSIONS",false).apply();
+                        }
+                    }
+                });
+
+        root = (Switch) findViewById(R.id.root_enable);
+        root.setChecked(sharedPreferences.getBoolean("ROOTENABLE",false));
+        root.setOnCheckedChangeListener(
+                new CheckBox.OnCheckedChangeListener(){
+                    public void onCheckedChanged(CompoundButton buttonView,boolean isChecked){
+                        //Metodo
+                    }
+                });
+
+        size = (Switch) findViewById(R.id.size_file_set);
+        size.setChecked(sharedPreferences.getBoolean("SIZEFILES",false));
+        size.setOnCheckedChangeListener(
+                new CheckBox.OnCheckedChangeListener() {
+                    public void onCheckedChanged(CompoundButton buttonView,
+                                                 boolean isChecked) {
+                        if(isChecked){
+                            editor = sharedPreferences.edit();
+                            editor.putBoolean("SIZEFILES",true).apply();
+                        }else{
+                            editor = sharedPreferences.edit();
+                            editor.putBoolean("SIZEFILES",false).apply();
+                        }
+                    }
+                });
+
+        date= (Switch) findViewById(R.id.last_modified);
+        date.setChecked(sharedPreferences.getBoolean("LASTMODIFIED",true));
+        date.setOnCheckedChangeListener(
+                new CheckBox.OnCheckedChangeListener() {
+                    public void onCheckedChanged(CompoundButton buttonView,
+                                                 boolean isChecked) {
+                        if(isChecked){
+                            editor = sharedPreferences.edit();
+                            editor.putBoolean("LASTMODIFIED",true).apply();
+                        }else{
+                            editor = sharedPreferences.edit();
+                            editor.putBoolean("LASTMODIFIED",false).apply();
+                        }
+
+                    }
+                });
+
+    }
+
 }
 

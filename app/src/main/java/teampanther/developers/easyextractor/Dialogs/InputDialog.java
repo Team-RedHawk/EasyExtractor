@@ -1,4 +1,4 @@
-package teampanther.developers.easyextractor.ui;
+package teampanther.developers.easyextractor.Dialogs;
 
 import android.content.Context;
 import android.content.DialogInterface;

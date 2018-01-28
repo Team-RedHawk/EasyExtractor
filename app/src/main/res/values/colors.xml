@@ -14,5 +14,9 @@
     <color name="colorAccentLight">#FFFF00</color>
 
     <color name="colorwhite">#fff</color>
+    <color name="md_text">#df000000</color>
+    <color name="md_secondary_text_icons">#8a000000</color>
+    <color name="md_disabled_hint_text">#4c000000</color>
+    <color name="md_divider">#1f000000</color>
 
 </resources>

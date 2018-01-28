@@ -17,21 +17,26 @@ import android.provider.MediaStore;
 import android.support.v4.content.CursorLoader;
 import android.text.format.DateFormat;
 import android.text.format.Formatter;
+import android.util.Log;
 import android.webkit.MimeTypeMap;
 
 import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.lang.reflect.Array;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.nio.channels.FileChannel;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
+import java.util.zip.ZipOutputStream;
 
 import teampanther.developers.easyextractor.R;
 
@@ -107,6 +112,73 @@ public class FileHelper {
         if (file.renameTo(newFile)) return newFile;
 
         throw new Exception(String.format("Error renombrando %s", file.getName()));
+    }
+
+    public static boolean zipFileAtPath(List<File> files, String toLocation){
+        final int BUFFER = 2048;
+        try {
+            BufferedInputStream origin = null;
+            FileOutputStream dest = new FileOutputStream(toLocation);
+            ZipOutputStream out = new ZipOutputStream(new BufferedOutputStream(
+                    dest));
+            for(File sourceFile: files) {
+                if (sourceFile.isDirectory()) {
+                    zipSubFolder(out, sourceFile, sourceFile.getParent().length());
+                } else {
+                    byte data[] = new byte[BUFFER];
+                    String unmodifiedFilePath = sourceFile.getPath();
+                    String relativePath = unmodifiedFilePath
+                            .substring(sourceFile.getParent().length()+1);
+                    FileInputStream fi = new FileInputStream(unmodifiedFilePath);
+                    origin = new BufferedInputStream(fi, BUFFER);
+                    ZipEntry entry = new ZipEntry(relativePath);
+                    out.putNextEntry(entry);
+                    int count;
+                    while ((count = origin.read(data, 0, BUFFER)) != -1) {
+                        out.write(data, 0, count);
+                    }
+                    origin.close();
+                }
+            }
+            out.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+        return true;
+    }
+
+    public static void zipSubFolder(ZipOutputStream out, File folder,
+                              int basePathLength) throws IOException {
+
+        final int BUFFER = 2048;
+
+        File[] fileList = folder.listFiles();
+        if(fileList.length == 0){
+            String relativePath = folder.getPath()
+                    .substring(basePathLength+1);
+            out.putNextEntry(new ZipEntry(relativePath+"/"));
+        }
+        BufferedInputStream origin = null;
+        for (File file : fileList) {
+            if (file.isDirectory()) {
+                zipSubFolder(out, file, basePathLength);
+            } else {
+                byte data[] = new byte[BUFFER];
+                String unmodifiedFilePath = file.getPath();
+                String relativePath = unmodifiedFilePath
+                        .substring(basePathLength+1);
+                FileInputStream fi = new FileInputStream(unmodifiedFilePath);
+                origin = new BufferedInputStream(fi, BUFFER);
+                ZipEntry entry = new ZipEntry(relativePath);
+                out.putNextEntry(entry);
+                int count;
+                while ((count = origin.read(data, 0, BUFFER)) != -1) {
+                    out.write(data, 0, count);
+                }
+                origin.close();
+            }
+        }
     }
 
     public static File unzip(File zip) throws Exception {
@@ -261,7 +333,7 @@ public class FileHelper {
 
             if (children == null) return null;
 
-            return String.format("%s archivos", children.length);
+            return String.format(" %s archivos", children.length);
         }
         else {
 
@@ -272,8 +344,12 @@ public class FileHelper {
     public static String getStorageUsage(Context context) {
 
         File internal = getInternalStorage();
-
-        File external = getExternalStorage();
+        File external;
+        if (getStoragePath(context,false) != null) {
+            external = new File(getStoragePath(context, false));
+        }else{
+            external = null;
+        }
 
         long f = internal.getFreeSpace();
 
@@ -309,7 +385,7 @@ public class FileHelper {
         }
     }
 
-    private static String getExtension(String filename) {
+    public static String getExtension(String filename) {
 
         //returns the file extension or an empty string iff there is no extension
 
@@ -461,8 +537,12 @@ public class FileHelper {
 
             String mime = FileHelper.getMimeType(file);
 
-            if (mime == null)
+            if (mime == null) {
+                if (getExtension(file.getName()).equals("img")){
+                    return FileType.IMG;
+                }
                 return FileType.MISC_FILE;
+            }
 
             if (mime.startsWith("audio"))
                 return FileType.AUDIO;

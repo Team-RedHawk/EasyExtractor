@@ -1,6 +1,7 @@
 package teampanther.developers.easyextractor.RecyclerView;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
@@ -35,6 +36,8 @@ final class ViewHolder0 extends ViewHolder {
     private TextView date;
 
     private TextView size;
+
+    private SharedPreferences sharedPreferences;
 
     ViewHolder0(Context context, OnItemClickListener listener, View view) {
 
@@ -132,22 +135,22 @@ final class ViewHolder0 extends ViewHolder {
 
     @Override
     protected void bindName(File file) {
-
-        boolean extension = getBoolean(context, "pref_extension", true);
+        sharedPreferences = context.getSharedPreferences("VALUES", Context.MODE_PRIVATE);
+        boolean extension = sharedPreferences.getBoolean("HIDEEXTENSIONS",true);
 
         name.setText(extension ? getName(file) : file.getName());
     }
 
     @Override
     protected void bindInfo(File file) {
-
+        sharedPreferences = context.getSharedPreferences("VALUES", Context.MODE_PRIVATE);
         date.setText(getLastModified(file));
 
         size.setText(getSize(context, file));
 
-        setVisibility(date, getBoolean(context, "pref_date", true));
+        setVisibility(date, sharedPreferences.getBoolean("LASTMODIFIED",true));
 
-        setVisibility(size, getBoolean(context, "pref_size", false));
+        setVisibility(size, sharedPreferences.getBoolean("SIZEFILES",false));
     }
 
     private ShapeDrawable getBackground(int color) {

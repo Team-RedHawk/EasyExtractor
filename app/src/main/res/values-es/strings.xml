@@ -24,4 +24,14 @@
     <string name="send">Enviar</string>
     <string name="action_sort">Ordenar</string>
     <string name="Compress">Comprimir</string>
+    <string name="ajustes_title_general">General</string>
+    <string name="ajustes_extension">Ocultar extension</string>
+    <string name="ajustes_date_modified">Mostrar fecha de modificacion</string>
+    <string name="ajustes_size_file">Mostrar tamaño de archivos</string>
+    <string name="ajustes_title_apariencia">Apariencia</string>
+    <string name="ajustes_theme_dark">Usar tema dark</string>
+    <string name="temp_date">12/MAR/2018</string>
+    <string name="temp_title">Titulo</string>
+    <string name="temp_size">12mb</string>
+    <string name="app_version">EasyExtractor v.0.5</string>
 </resources>
