@@ -11,14 +11,14 @@
     <android.support.design.widget.AppBarLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:theme="@style/AppTheme.AppBarOverlay">
+        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
 
         <android.support.v7.widget.Toolbar
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             android:background="?attr/colorPrimary"
-            app:popupTheme="@style/AppTheme.PopupOverlay"
+            app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
             tools:targetApi="lollipop" />
     </android.support.design.widget.AppBarLayout>
 
@@ -31,28 +31,144 @@
         android:paddingLeft="24dp"
         android:paddingRight="24dp"
         android:paddingTop="16dp"
+        android:focusableInTouchMode="true"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
         <TextView
+            android:id="@+id/textView"
             android:layout_width="match_parent"
-            android:layout_height="26dp"
-            android:text="@string/root" />
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="24dp"
+            android:layout_marginRight="24dp"
+            android:layout_marginTop="16dp"
+            android:fontFamily="sans-serif-medium"
+            android:gravity="center_vertical"
+            android:text="@string/ajustes_title_general"
+            android:textAppearance="@style/TextAppearance.AppCompat.Subhead.Inverse"
+            android:textColor="?attr/colorAccent" />
 
-        <Switch
+        <!-- Mostrar si oculta o no la extension -->
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="26dp"
-            android:text="@string/enablerootaccess" />
+            android:layout_height="56dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="8dp"
+            android:layout_marginStart="8dp">
+
+            <Switch
+                android:id="@+id/hide_extension"
+                android:layout_width="match_parent"
+                android:layout_height="26dp"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:textAppearance="@style/TextAppearance.AppCompat.Inverse"
+                android:textColor="@color/md_text"
+                android:text="@string/ajustes_extension" />
+
+        </RelativeLayout>
+
+        <!-- Mostrar ultima fecha de modificacion -->
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="8dp"
+            android:layout_marginStart="8dp">
+
+            <Switch
+                android:id="@+id/last_modified"
+                android:layout_width="match_parent"
+                android:layout_height="26dp"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:textAppearance="@style/TextAppearance.AppCompat.Inverse"
+                android:textColor="@color/md_text"
+                android:text="@string/ajustes_date_modified" />
+
+        </RelativeLayout>
+
+        <!--Mostrar tamaño de archivos -->
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="8dp"
+            android:layout_marginStart="8dp">
+
+            <Switch
+                android:id="@+id/size_file_set"
+                android:layout_width="match_parent"
+                android:layout_height="26dp"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:textAppearance="@style/TextAppearance.AppCompat.Inverse"
+                android:textColor="@color/md_text"
+                android:text="@string/ajustes_size_file" />
+
+        </RelativeLayout>
+
+        <!-- Root enable -->
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="8dp"
+            android:layout_marginStart="8dp">
+
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_alignParentBottom="true"
+                android:layout_marginTop="8dp"
+                android:background="@color/md_divider" />
+
+            <Switch
+                android:id="@+id/root_enable"
+                android:layout_width="match_parent"
+                android:layout_height="26dp"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:textAppearance="@style/TextAppearance.AppCompat.Inverse"
+                android:textColor="@color/md_text"
+                android:text="@string/enablerootaccess" />
+
+        </RelativeLayout>
 
         <TextView
+            android:id="@+id/textViewAdvancedSetting"
             android:layout_width="match_parent"
-            android:layout_height="26dp"
-            android:text="@string/theme" />
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="24dp"
+            android:layout_marginRight="24dp"
+            android:layout_marginTop="16dp"
+            android:fontFamily="sans-serif-medium"
+            android:gravity="center_vertical"
+            android:text="@string/ajustes_title_apariencia"
+            android:textAppearance="@style/TextAppearance.AppCompat.Subhead.Inverse"
+            android:textColor="?attr/colorAccent" />
 
-        <Switch
-            android:id="@+id/darkTheme"
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="26dp"
-            android:text="@string/dark" />
+            android:layout_height="56dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="8dp"
+            android:layout_marginStart="8dp">
+
+            <Switch
+                android:id="@+id/darkTheme"
+                android:layout_width="match_parent"
+                android:layout_height="26dp"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:textAppearance="@style/TextAppearance.AppCompat.Inverse"
+                android:textColor="@color/md_text"
+                android:text="@string/ajustes_theme_dark" />
+        </RelativeLayout>
     </LinearLayout>
 
 

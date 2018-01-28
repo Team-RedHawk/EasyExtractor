@@ -5,10 +5,18 @@
     <color name="colorAccent">#FF4081</color>
     <color name="coloDark">#000000</color>
 
+
     <!-- Tema 2 -->
     <color name="colorPrimaryTheme2">#607D8B</color>
     <color name="colorPrimaryDarkTheme2">#455A64</color>
     <color name="colorAccentTheme2">#1976D2</color>
     <color name="coloDarkTheme2">#000000</color>
+    <color name="colorAccentLight">#FFFF00</color>
+
+    <color name="colorwhite">#fff</color>
+    <color name="md_text">#df000000</color>
+    <color name="md_secondary_text_icons">#8a000000</color>
+    <color name="md_disabled_hint_text">#4c000000</color>
+    <color name="md_divider">#1f000000</color>
 
 </resources>

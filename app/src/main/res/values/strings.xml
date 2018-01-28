@@ -19,4 +19,20 @@
     <string name="enablerootaccess">Enabled Root Access</string>
     <string name="theme">Theme</string>
     <string name="dark">Dark</string>
+    <string name="Copyright">Copyright © 2017-2018</string>
+    <string name="buscar">Search</string>
+    <string name="move">Move</string>
+    <string name="send">Send</string>
+    <string name="action_sort">Sort</string>
+    <string name="Compress">Compress</string>
+    <string name="ajustes_title_general">General</string>
+    <string name="ajustes_extension">Hide extension</string>
+    <string name="ajustes_date_modified">Show Last Modified</string>
+    <string name="ajustes_size_file">Show file sizes</string>
+    <string name="ajustes_title_apariencia">Appearance</string>
+    <string name="ajustes_theme_dark">Use theme dark</string>
+    <string name="temp_title">Title</string>
+    <string name="temp_date">12/MAR/2018</string>
+    <string name="temp_size">12mb</string>
+    <string name="app_version">EasyExtractor v.0.5</string>
 </resources>
