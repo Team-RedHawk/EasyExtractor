@@ -35,4 +35,18 @@
     <string name="temp_date">12/MAR/2018</string>
     <string name="temp_size">12mb</string>
     <string name="app_version">EasyExtractor v.0.5</string>
+    <string name="unpack_repack">Enabled module unpack repack img</string>
+    <string name="dialog_unpack_storage">Select storage where the tool will be placed</string>
+    <string name="dialog_unpack_cancel">Cancel</string>
+    <string name="dialog_unpack_ok">Ok</string>
+    <string name="Error_root">Error root</string>
+    <string name="error_root_acces">Can\'t get root access or denied by user</string>
+    <string name="Error_busy">Error busybox</string>
+    <string name="Error_busy_not_install">Can´t get busybox access, Is it installed?. Try installing it.</string>
+    <string name="error_create_directory">Error in create directory</string>
+    <string name="error_copy_file">Error in copy files</string>
+    <string name="error_copy_bash">Error in copy bash file in /system/xbin</string>
+    <string name="menu_tool_instructions">Instructions</string>
+    <string name="menu_tool_unpack">Unpack</string>
+    <string name="menu_tool_repack">Repack</string>
 </resources>

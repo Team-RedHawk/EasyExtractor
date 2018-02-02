@@ -5,6 +5,7 @@ package teampanther.developers.easyextractor.UtilsHelper;
  */
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
@@ -22,11 +23,17 @@ import android.webkit.MimeTypeMap;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
+import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.lang.reflect.Array;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -68,7 +75,7 @@ public class FileHelper {
             }
         }
         catch (Exception e) {
-
+            e.printStackTrace();
             throw new Exception(String.format("Error copiando %s", src.getName()));
         }
     }
@@ -339,6 +346,135 @@ public class FileHelper {
 
             return Formatter.formatShortFileSize(context, file.length());
         }
+    }
+
+    public static boolean getStatusRoot(Context context){
+        boolean retval=false;
+        SharedPreferences sharedPreferences= context.getSharedPreferences("VALUES", Context.MODE_PRIVATE);
+        if (sharedPreferences.getBoolean("ROOTENABLE",false)){
+            if (canRunRootCommands()){
+                retval = true;
+            }else{
+                SharedPreferences.Editor editor = sharedPreferences.edit();
+                editor.putBoolean("ROOTENABLE",false).apply();
+                retval = false;
+            }
+        }else{
+            retval = false;
+        }
+        return retval;
+    }
+
+
+
+    public static boolean canRunRootCommands()
+    {
+        boolean retval = false;
+        Process suProcess;
+
+        try
+        {
+            suProcess = Runtime.getRuntime().exec("su");
+
+            DataOutputStream os = new DataOutputStream(suProcess.getOutputStream());
+            BufferedReader osRes = new BufferedReader(new InputStreamReader(suProcess.getInputStream()));
+
+            if (null != os && null != osRes)
+            {
+                // Getting the id of the current user to check if this is root
+                os.writeBytes("id\n");
+                os.flush();
+
+                String currUid = osRes.readLine();
+                boolean exitSu = false;
+                if (null == currUid)
+                {
+                    retval = false;
+                    exitSu = false;
+                    Log.d("ROOT", "Can't get root access or denied by user");
+                }
+                else if (currUid.contains("uid=0"))
+                {
+                    retval = true;
+                    exitSu = true;
+                    Log.d("ROOT", "Root access granted");
+                }
+                else
+                {
+                    retval = false;
+                    exitSu = true;
+                    Log.d("ROOT", "Root access rejected: " + currUid);
+                }
+
+                if (exitSu)
+                {
+                    os.writeBytes("exit\n");
+                    os.flush();
+                }
+            }
+        }
+        catch (Exception e)
+        {
+            // Can't get root !
+            // Probably broken pipe exception on trying to write to output stream (os) after su failed, meaning that the device is not rooted
+
+            retval = false;
+            Log.d("ROOT", "Root access rejected [" + e.getClass().getName() + "] : " + e.getMessage());
+        }
+
+        return retval;
+    }
+
+    public static String sudoForResult(String...strings) {
+        String res = "";
+        DataOutputStream outputStream = null;
+        InputStream response = null;
+        try{
+            Process su = Runtime.getRuntime().exec("su");
+            outputStream = new DataOutputStream(su.getOutputStream());
+            response = su.getInputStream();
+
+            for (String s : strings) {
+                outputStream.writeBytes(s+"\n");
+                outputStream.flush();
+            }
+
+            outputStream.writeBytes("exit\n");
+            outputStream.flush();
+            try {
+                su.waitFor();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            res = readFully(response);
+        } catch (IOException e){
+            e.printStackTrace();
+        } finally {
+            Closer.closeSilently(outputStream, response);
+        }
+        return res;
+    }
+
+    public static String readFully(InputStream is) throws IOException {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        byte[] buffer = new byte[1024];
+        int length = 0;
+        while ((length = is.read(buffer)) != -1) {
+            baos.write(buffer, 0, length);
+        }
+        return baos.toString("UTF-8");
+    }
+
+    public static Boolean getBusyboxInstalled(){
+        Boolean flag= false;
+        String ok= sudoForResult("busybox | head -1");
+        Log.d("Busybox",ok);
+        if (!ok.isEmpty()){
+            flag= true;
+        }else{
+            flag=false;
+        }
+        return flag;
     }
 
     public static String getStorageUsage(Context context) {

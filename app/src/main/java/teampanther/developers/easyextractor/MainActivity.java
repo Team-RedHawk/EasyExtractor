@@ -1,6 +1,8 @@
 package teampanther.developers.easyextractor;
 
 import android.Manifest;
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
@@ -40,6 +42,9 @@ import teampanther.developers.easyextractor.Dialogs.InputDialog;
 import teampanther.developers.easyextractor.UtilsHelper.FileHelper;
 import teampanther.developers.easyextractor.UtilsHelper.PreferenceUtil;
 
+import terranovaproductions.newcomicreader.FloatingActionMenu;
+
+import static android.view.View.VISIBLE;
 import static teampanther.developers.easyextractor.UtilsHelper.FileHelper.*;
 
 import java.io.File;
@@ -69,6 +74,7 @@ public class MainActivity extends AppCompatActivity {
     private Adapter adapter;
     private File currentDirectory;
     private CollapsingToolbarLayout toolbarLayout;
+    private FloatingActionMenu menu;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -274,6 +280,31 @@ public class MainActivity extends AppCompatActivity {
 
     private void initFloatingActionButton() {
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.add_folder);
+        menu = (FloatingActionMenu) findViewById(R.id.fab);
+        //Menu en forma de circulo
+        //menu.setMultipleOfFB(3.2f);
+        //menu.setIsCircle(true);
+        //Menu en forma de linea
+        //menu.setmItemGap(48);
+        menu.setOnMenuItemClickListener(new FloatingActionMenu.OnMenuItemClickListener() {
+            @Override
+            public void onMenuItemClick(FloatingActionMenu fam, int index, FloatingActionButton item) {
+                String str = "";
+                switch (index) {
+                    case 0:
+                        str = "Click en instrucciones!";
+                        break;
+                    case 1:
+                        str = "Click en unpack!";
+                        break;
+                    case 2:
+                        str = "Click en repack!";
+                        break;
+                    default:
+                }
+                Toast.makeText(MainActivity.this, str, Toast.LENGTH_SHORT).show();
+            }
+        });
         if (fab == null) return;
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -281,8 +312,8 @@ public class MainActivity extends AppCompatActivity {
                 actionCreate();
             }
         });
-        if (name != null || type != null)
-        {
+
+        if (name != null || type != null) {
             ViewGroup.LayoutParams layoutParams = fab.getLayoutParams();
 
             ((CoordinatorLayout.LayoutParams) layoutParams).setAnchorId(View.NO_ID);
@@ -476,7 +507,7 @@ public class MainActivity extends AppCompatActivity {
         }
         else if (type != null) {
 
-            switch (type) {
+            /*switch (type) {
 
                 case "image":
                     toolbarLayout.setTitle("Images");
@@ -489,7 +520,7 @@ public class MainActivity extends AppCompatActivity {
                 case "video":
                     toolbarLayout.setTitle("Videos");
                     break;
-            }
+            }*/
         }
         else if (currentDirectory != null && !currentDirectory.equals(getInternalStorage())) {
 
@@ -592,6 +623,15 @@ public class MainActivity extends AppCompatActivity {
 
             return;
         }
+
+        if (sharedPreferences.getBoolean("TOOLENABLE",false)){
+            if (directory.getAbsolutePath().equals(sharedPreferences.getString("PATHTOOL",""))){
+                menu.setVisibility(VISIBLE);
+            }else{
+                menu.setVisibility(View.GONE);
+            }
+        }
+
 
         currentDirectory = directory;
 
@@ -967,6 +1007,7 @@ public class MainActivity extends AppCompatActivity {
                                 });
                             }
                             catch (Exception e) {
+                                dialog.dismiss();
                                 showMessage(e);
                             }
 

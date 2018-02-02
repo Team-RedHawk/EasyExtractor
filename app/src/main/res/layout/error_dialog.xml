@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/dialogLayout"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:background="@color/colorwhite"
+    android:orientation="vertical"
+    android:weightSum="1">
+
+    <TextView
+        android:id="@+id/textViewErrorDialogTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="24dp"
+        android:text="@string/about"
+        android:textAppearance="@style/TextAppearance.AppCompat.Title"
+        android:textColor="@color/md_text"
+        android:layout_gravity="center_horizontal" />
+
+    <FrameLayout
+        android:background="@color/md_divider"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"/>
+
+    <TextView
+        android:id="@+id/textViewErrorDialogDialog"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        android:layout_marginLeft="24dp"
+        android:layout_marginRight="24dp"
+        android:text="@string/contact"
+        android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
+        android:textColor="@color/md_secondary_text_icons"
+        android:layout_gravity="center_horizontal"
+        />
+
+    <TextView
+        android:id="@+id/error_links"
+        android:focusable="true"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        android:layout_marginBottom="16dp"
+        android:layout_marginLeft="24dp"
+        android:layout_marginRight="24dp"
+        android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
+        android:layout_gravity="center_horizontal"
+        android:textColor="@color/colorAccent"
+        android:clickable="true"/>
+
+</LinearLayout>
