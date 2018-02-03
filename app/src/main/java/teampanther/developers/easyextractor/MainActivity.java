@@ -36,6 +36,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import teampanther.developers.easyextractor.Dialogs.About_dialog;
+import teampanther.developers.easyextractor.Dialogs.ScriptDialog;
 import teampanther.developers.easyextractor.RecyclerView.Adapter;
 import teampanther.developers.easyextractor.RecyclerView.OnItemSelectedListener;
 import teampanther.developers.easyextractor.Dialogs.InputDialog;
@@ -295,14 +296,13 @@ public class MainActivity extends AppCompatActivity {
                         str = "Click en instrucciones!";
                         break;
                     case 1:
-                        str = "Click en unpack!";
+                        ScriptUnpack();
                         break;
                     case 2:
                         str = "Click en repack!";
                         break;
                     default:
                 }
-                Toast.makeText(MainActivity.this, str, Toast.LENGTH_SHORT).show();
             }
         });
         if (fab == null) return;
@@ -941,9 +941,48 @@ public class MainActivity extends AppCompatActivity {
                 .show();
     }
 
-
-
     //--End Actions -->
+
+    //-- Scripts Action -->
+
+    public void ScriptUnpack(){
+        final InputDialog inputDialog = new InputDialog(this, "Aceptar", "Nombre del archivo img") {
+            @Override
+            public void onActionClick(final String text) {
+                File test= new File(currentDirectory.getAbsolutePath()+File.separator+text+".img");
+                if (test.exists()){
+                    InputDialog otroDialog= new InputDialog(MainActivity.this,"Aceptar","Nombre del directorio de salida") {
+                        @Override
+                        public void onActionClick(String otro) {
+                            if (new File(currentDirectory.getAbsolutePath()+File.separator+otro).exists()){
+                                showMessage(getString(R.string.error_direct_exist));
+                            }else{
+                                if (FileHelper.getStatusRoot(getApplicationContext())) {
+                                    FragmentManager fragmentManager = getSupportFragmentManager();
+                                    ScriptDialog unpack = new ScriptDialog();
+                                    unpack.addNameImg(text + ".img");
+                                    unpack.addDirectName(otro);
+                                    unpack.mode(true);
+                                    unpack.setFileDirect(currentDirectory);
+                                    unpack.show(fragmentManager, "UnpackScript");
+                                }else{
+                                    showMessage(getString(R.string.error_root_acces));
+                                }
+                            }
+                        }
+                    };
+                    otroDialog.show();
+                }else{
+                    showMessage(getString(R.string.error_not_file_name)+text+".img");
+                }
+            }
+        };
+        inputDialog.show();
+    }
+
+    public void ScriptRepack(){
+
+    }
 
     //Creamos la clase xD
     private final class OnItemClickListener implements teampanther.developers.easyextractor.RecyclerView.OnItemClickListener {

@@ -118,6 +118,7 @@ public class ToolDialogSelect extends DialogFragment implements View.OnClickList
                 items_layout.setVisibility(View.GONE);
                 textView3.setText("Procesando");
                 progress.setVisibility(View.VISIBLE);
+                final String path= "/data/local/" + "tmp";
                 Thread hilo= new Thread(new Runnable() {
                     @Override
                     public void run() {
@@ -125,9 +126,9 @@ public class ToolDialogSelect extends DialogFragment implements View.OnClickList
                             //Setear si es 1 externa, si es 2 interna
                             if(CurrentId == 1){
                                 if (createToolDirectory(FileHelper.getStoragePath(getContext(),true)+ File.separator+"Mkboot")) {
-                                    if (copyAssets("ARM",FileHelper.getStoragePath(getContext(),true)+ File.separator+"Mkboot")){
-                                        getPermissions(FileHelper.getStoragePath(getContext(),true)+ File.separator+"Mkboot");
-                                        if (copyBash(FileHelper.getStoragePath(getContext(),true)+ File.separator+"Mkboot")){
+                                    if (copyFileOrDir("ARM")){
+                                        getPermissions(path+"/ARM");
+                                        if (copyBash(path+"/ARM")){
                                             setPathShared(FileHelper.getStoragePath(getContext(),true)+ File.separator+"Mkboot");
                                         }else {
                                             error=getString(R.string.error_copy_bash);
@@ -143,9 +144,9 @@ public class ToolDialogSelect extends DialogFragment implements View.OnClickList
                                 }
                             }else{
                                 if (createToolDirectory(FileHelper.getStoragePath(getContext(),false)+ File.separator+"Mkboot")){
-                                    if (copyAssets("ARM",FileHelper.getStoragePath(getContext(),false)+ File.separator+"Mkboot")){
-                                        getPermissions(FileHelper.getStoragePath(getContext(),false)+ File.separator+"Mkboot");
-                                        if (copyBash(FileHelper.getStoragePath(getContext(),false)+ File.separator+"Mkboot")){
+                                    if (copyFileOrDir("ARM")){
+                                        getPermissions(path+"/ARM");
+                                        if (copyBash(path+"/ARM")){
                                             setPathShared(FileHelper.getStoragePath(getContext(),false)+ File.separator+"Mkboot");
                                         }else {
                                             error=getString(R.string.error_copy_bash);
@@ -163,9 +164,9 @@ public class ToolDialogSelect extends DialogFragment implements View.OnClickList
                         }else{
                             //setear por defecto interno
                             if (createToolDirectory(FileHelper.getStoragePath(getContext(),false)+ File.separator+"Mkboot")){
-                                if (copyAssets("ARM",FileHelper.getStoragePath(getContext(),false)+ File.separator+"Mkboot")){
-                                    getPermissions(FileHelper.getStoragePath(getContext(),false)+ File.separator+"Mkboot");
-                                    if (copyBash(FileHelper.getStoragePath(getContext(),false)+ File.separator+"Mkboot")){
+                                if (copyFileOrDir("ARM")){
+                                    getPermissions(path+"/ARM");
+                                    if (copyBash(path+"/ARM")){
                                         setPathShared(FileHelper.getStoragePath(getContext(),false)+ File.separator+"Mkboot");
                                     }else {
                                         error=getString(R.string.error_copy_bash);
@@ -212,9 +213,9 @@ public class ToolDialogSelect extends DialogFragment implements View.OnClickList
     public Boolean copyBash(String path){
         Boolean flag= false;
         try{
-            String[] wtf= {"busybox mount -o rw,remount system","busybox cp "+path+File.separator+"bash"+" /system/xbin/bash"};
+            String[] wtf= {"mount -o rw,remount,rw /system","cp "+path+File.separator+"bash"+" /system/xbin/"};
             FileHelper.sudoForResult(wtf);
-            FileHelper.sudoForResult("chmod 0755 /system/xbin/bash","busybox mount -o ro,remount system");
+            FileHelper.sudoForResult("chmod 0755 /system/xbin/bash","mount -o ro, remount,ro /system");
             File nuevo= new File("/system/xbin/bash");
             if (nuevo.exists()){
                 flag=true;
@@ -290,44 +291,41 @@ public class ToolDialogSelect extends DialogFragment implements View.OnClickList
         FileHelper.sudoForResult(wtf);
     }
 
-    private Boolean copyAssets(String path, String outPath) {
-        Boolean flag= false;
+    public boolean copyFileOrDir(String path) {
+        boolean flag= false;
         AssetManager assetManager = getActivity().getAssets();
-        String assets[];
+        String assets[] = null;
         try {
             assets = assetManager.list(path);
             if (assets.length == 0) {
-                flag= copyFile(path, outPath);
+                flag= copyFile(path);
             } else {
-                File dir = new File(outPath);
-                if (!dir.exists())
-                    if (!dir.mkdir()) Log.e(TAG, "No create external directory: " + dir );
-                for (String asset : assets) {
-                    flag= copyAssets(path + "/" + asset, outPath);
+                String fullPath = "/data/local/" + "tmp" + "/" + path;
+                File dir = new File(fullPath);
+                if (!dir.exists()) {
+                    if (!dir.mkdir()) FileHelper.sudoForResult("mkdir "+fullPath,"chmod 777 "+fullPath);
+                    if(!dir.exists()) Log.e(TAG, "No create external directory: " + dir );
+                }
+                for (int i = 0; i < assets.length; ++i) {
+                    flag= copyFileOrDir(path + "/" + assets[i]);
                 }
             }
         } catch (IOException ex) {
-            Log.e(TAG, "I/O Exception", ex);
-            flag= false;
+            Log.e("tag", "I/O Exception", ex);
+            flag=false;
         }
         return flag;
     }
 
-    private Boolean copyFile(String filename, String outPath) {
-        Boolean flag= false;
+    private boolean copyFile(String filename) {
+        boolean flag=false;
         AssetManager assetManager = getActivity().getAssets();
 
-        InputStream in;
-        OutputStream out;
+        InputStream in = null;
+        OutputStream out = null;
         try {
             in = assetManager.open(filename);
-            String add;
-            if (filename.contains("bash")){
-                add= "/";
-            }else{
-                add= "/.";
-            }
-            String newFileName = outPath + add + filename.replace("ARM/","");
+            String newFileName = "/data/local/" + "tmp" + "/" + filename;
             out = new FileOutputStream(newFileName);
 
             byte[] buffer = new byte[1024];
@@ -336,12 +334,14 @@ public class ToolDialogSelect extends DialogFragment implements View.OnClickList
                 out.write(buffer, 0, read);
             }
             in.close();
+            in = null;
             out.flush();
             out.close();
-            flag= true;
+            out = null;
+            flag=true;
         } catch (Exception e) {
-            Log.e(TAG, e.getMessage());
             flag= false;
+            Log.e("tag", e.getMessage());
         }
         return flag;
     }

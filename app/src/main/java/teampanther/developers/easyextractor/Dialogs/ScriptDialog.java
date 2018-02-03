@@ -1,30 +1,27 @@
 package teampanther.developers.easyextractor.Dialogs;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
+import android.system.Os;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
+import android.widget.Button;
+import android.widget.LinearLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
+import android.widget.Toast;
 
-import java.io.BufferedReader;
-import java.io.ByteArrayOutputStream;
-import java.io.DataOutputStream;
+
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
 
 import teampanther.developers.easyextractor.R;
-import teampanther.developers.easyextractor.UtilsHelper.Closer;
-
-import static android.content.ContentValues.TAG;
-import static android.provider.Telephony.Mms.Part.FILENAME;
+import teampanther.developers.easyextractor.UtilsHelper.FileHelper;
 
 /**
  * Created by luffynando on 28/01/2018.
@@ -32,52 +29,116 @@ import static android.provider.Telephony.Mms.Part.FILENAME;
 
 public class ScriptDialog extends DialogFragment {
     private View view;
-    private File file;
+    private String fileImgName;
+    private String directorio;
+    private ScrollView scrollView;
+    private TextView script;
+    private LinearLayout linearLayout;
+    private SharedPreferences sharedPreferences;
+    private Button boton;
+    private String error;
+    private Boolean iserror= false;
+    private File direct;
+    private String res;
 
-    public void addFile(File file){
-        this.file = file;
-    }
+
+    //Boolean mode si es verdadero unpack, si es falso repack
+    private Boolean mode;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.script_dialog, container);
 
         getDialog().requestWindowFeature(Window.FEATURE_NO_TITLE);
+        sharedPreferences = getActivity().getSharedPreferences("VALUES", Context.MODE_PRIVATE);
+        setCancelable(false);
 
-        TextView script= (TextView) view.findViewById(R.id.script_text_dialog);
+        script = (TextView) view.findViewById(R.id.script_text_dialog);
+        scrollView = (ScrollView) view.findViewById(R.id.script_scroll);
+        linearLayout= (LinearLayout) view.findViewById(R.id.progressLinear);
+        boton= (Button) view.findViewById(R.id.buttonAcept);
+        boton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                getDialog().dismiss();
+            }
+        });
+        scrollView.setVisibility(View.GONE);
+        linearLayout.setVisibility(View.VISIBLE);
+        if (initCommands()) {
+            Thread t = new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    res = "";
+                    res = FileHelper.sudoForResult("chmod 0666 /data/local/tmp/ARM/"+fileImgName,"cd data/local/tmp/ARM","./mkboot "+fileImgName+" "+directorio);
+                    if (res.isEmpty()) {
+                        iserror = true;
+                        error = getString(R.string.error_empty_string);
+                    } else {
+                        iserror = false;
+                    }
+                    getActivity().runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (iserror) {
+                                Toast nueva = Toast.makeText(getContext(),
+                                        error, Toast.LENGTH_SHORT);
+                                nueva.show();
+                                getDialog().dismiss();
+                            } else {
+                                script.setText(res);
+                                linearLayout.setVisibility(View.GONE);
+                                scrollView.setVisibility(View.VISIBLE);
+                            }
 
-        executeScript(script,R.raw.test);
+                        }
+                    });
+                }
+            });
+            t.start();
+        }else{
+            script.setText(getString(R.string.Error_no_permissions_or_space));
+            linearLayout.setVisibility(View.GONE);
+            scrollView.setVisibility(View.VISIBLE);
+        }
+
         return view;
     }
 
-    public void executeScript(TextView textView, int file){
-        String res = "";
-        try {
-            /*InputStream ins = getResources().openRawResource(file);
-            byte[] buffer = new byte[ins.available()];
-            ins.read(buffer);
-            ins.close();
-            FileOutputStream fos = getContext().openFileOutput(FILENAME, Context.MODE_PRIVATE);
-            fos.write(buffer);
-            fos.close();
+    public void addNameImg(String img){
+        fileImgName= img;
+    }
 
+    public void addDirectName(String directorio){
+        this.directorio=directorio;
+    }
 
-            File file2 = getContext().getFileStreamPath (FILENAME);
-            file2.setExecutable(true);*/
-            /*String[] strings= {"chmod +x "+this.file.getAbsolutePath()+File.separator+"test.sh","./"+this.file.getAbsolutePath()+File.separator+"test.sh"};
-            res= sudoForResult(strings);*/
-            Process process = Runtime.getRuntime().exec("sh "+this.file.getAbsolutePath()+File.separator+"test.sh");
-            BufferedReader in = new BufferedReader(new InputStreamReader(process.getInputStream()));
-            String listOfFiles = "";
-            String line;
-            while ((line = in.readLine()) != null) {
-                listOfFiles += line;
+    public void mode(Boolean mode){
+        this.mode= mode;
+    }
+
+    public void setFileDirect(File dir){
+        this.direct= dir;
+    }
+
+    public boolean initCommands(){
+        boolean flag= false;
+        if (mode){
+            //UNPACK
+            File boot= new File(direct,fileImgName);
+            File directorio= new File("/data/local/tmp/ARM");
+            try {
+                FileHelper.copyFile(boot,directorio);
+                flag=true;
+            }catch (Exception e){
+                e.printStackTrace();
+                flag= false;
             }
-            textView.setText(listOfFiles);
-        } catch (Exception e) {
-            e.printStackTrace();
-            textView.setText("Error");
+        }else{
+            //REPACK
+
         }
+        return  flag;
     }
 
 }

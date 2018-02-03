@@ -49,4 +49,8 @@
     <string name="menu_tool_instructions">Instructions</string>
     <string name="menu_tool_unpack">Unpack</string>
     <string name="menu_tool_repack">Repack</string>
+    <string name="error_not_file_name">Error not exist</string>
+    <string name="error_direct_exist">Error direct exist</string>
+    <string name="error_empty_string">Error not string result</string>
+    <string name="Error_no_permissions_or_space">Error not permissions for files or insufficient space.</string>
 </resources>

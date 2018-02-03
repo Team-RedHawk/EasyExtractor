@@ -48,4 +48,8 @@
     <string name="menu_tool_instructions">Instrucciones</string>
     <string name="menu_tool_unpack">Desempaquetar</string>
     <string name="menu_tool_repack">Empaquetar</string>
+    <string name="error_not_file_name">Error no existe</string>
+    <string name="error_direct_exist">Error el directorio existe</string>
+    <string name="error_empty_string">Error no retorno nada el string</string>
+    <string name="Error_no_permissions_or_space">No hay permisos para los archivos o no hay espacio suficiente.</string>
 </resources>

@@ -6,10 +6,7 @@ package teampanther.developers.easyextractor.UtilsHelper;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager;
 import android.database.Cursor;
-import android.graphics.drawable.Drawable;
 import android.media.MediaMetadataRetriever;
 import android.net.Uri;
 import android.os.Environment;
@@ -25,7 +22,6 @@ import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
-import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileFilter;
@@ -423,6 +419,38 @@ public class FileHelper {
         }
 
         return retval;
+    }
+
+    public static String Executer(String command) {
+
+        StringBuffer output = new StringBuffer();
+
+        Process p;
+        try {
+            p = Runtime.getRuntime().exec(command);
+            p.waitFor();
+            BufferedReader reader = new BufferedReader(new InputStreamReader(p.getInputStream()));
+
+            String line = "";
+            while ((line = reader.readLine())!= null) {
+                output.append(line + "n");
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        String response = output.toString();
+        return response;
+
+    }
+
+    public static boolean containsSymlink(File file) {
+        try {
+            return !file.getCanonicalFile().equals(file.getAbsoluteFile());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return false;
     }
 
     public static String sudoForResult(String...strings) {
