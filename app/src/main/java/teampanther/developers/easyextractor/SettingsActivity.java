@@ -1,25 +1,33 @@
 package teampanther.developers.easyextractor;
 
+import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.app.NavUtils;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.text.Html;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.Window;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.Switch;
 import android.widget.Toast;
+
+import teampanther.developers.easyextractor.Dialogs.Error_dialog;
+import teampanther.developers.easyextractor.Dialogs.ToolDialogSelect;
+import teampanther.developers.easyextractor.UtilsHelper.FileHelper;
 
 public class SettingsActivity extends AppCompatActivity {
     SharedPreferences sharedPreferences;
     SharedPreferences.Editor editor;
     public int theme;
     Boolean homeButton = false, themeChanged;
-    Switch root, size, hide, date;
+    Switch root, size, hide, date, tool;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -116,6 +124,7 @@ public class SettingsActivity extends AppCompatActivity {
     public void onBackPressed() {
         Intent intent = new Intent(SettingsActivity.this, MainActivity.class);
         startActivity(intent);
+        finish();
     }
 
     public void theme() {
@@ -196,6 +205,19 @@ public class SettingsActivity extends AppCompatActivity {
         root.setOnCheckedChangeListener(
                 new CheckBox.OnCheckedChangeListener(){
                     public void onCheckedChanged(CompoundButton buttonView,boolean isChecked){
+                        if(isChecked){
+                            if(FileHelper.canRunRootCommands()){
+                                editor = sharedPreferences.edit();
+                                editor.putBoolean("ROOTENABLE",true).apply();
+                            }else{
+                                editor = sharedPreferences.edit();
+                                editor.putBoolean("ROOTENABLE",false).apply();
+                                root.setChecked(false);
+                            }
+                        }else {
+                            editor = sharedPreferences.edit();
+                            editor.putBoolean("ROOTENABLE",false).apply();
+                        }
                         //Metodo
                     }
                 });
@@ -233,6 +255,56 @@ public class SettingsActivity extends AppCompatActivity {
                     }
                 });
 
+        tool= (Switch) findViewById(R.id.unpack_repack_enable);
+        tool.setChecked(sharedPreferences.getBoolean("TOOLENABLE",false));
+        tool.setOnCheckedChangeListener(new CheckBox.OnCheckedChangeListener() {
+            public void onCheckedChanged(CompoundButton buttonView,
+                                         boolean isChecked) {
+                if(isChecked){
+                    if (FileHelper.getStatusRoot(getApplicationContext())){
+                        if(FileHelper.getBusyboxInstalled()){
+                            FragmentManager fragmentManager= getSupportFragmentManager();
+                            ToolDialogSelect tool2= new ToolDialogSelect();
+                            tool2.setTool(tool);
+                            tool2.setifExternal((FileHelper.getStoragePath(getApplicationContext(),true)) != null);
+                            tool2.show(fragmentManager,"Select");
+                        }else{
+                            showErrorMessage(getString(R.string.Error_busy), Html.fromHtml(getResources().getString(R.string.Error_busy_not_install)));
+                            editor = sharedPreferences.edit();
+                            editor.putBoolean("TOOLENABLE",false).apply();
+                            tool.setChecked(false);
+                        }
+                    }else{
+                        showErrorMessage(getString(R.string.Error_root),getString(R.string.error_root_acces));
+                        editor = sharedPreferences.edit();
+                        editor.putBoolean("TOOLENABLE",false).apply();
+                        tool.setChecked(false);
+                    }
+                }else{
+                    editor = sharedPreferences.edit();
+                    editor.putBoolean("TOOLENABLE",false).apply();
+                }
+
+            }
+        });
+
+    }
+
+    private void showErrorMessage(String titulo, android.text.Spanned msg){
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        Error_dialog dialog= new Error_dialog();
+        dialog.setTitulo(titulo);
+        dialog.setMessage(msg);
+        dialog.setLink("stericson.busybox");
+        dialog.show(fragmentManager, "ErrorDialog");
+    }
+
+    public void showErrorMessage(String titulo, String msg){
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        Error_dialog dialog= new Error_dialog();
+        dialog.setTitulo(titulo);
+        dialog.setMessage(msg);
+        dialog.show(fragmentManager, "ErrorDialog");
     }
 
 }
