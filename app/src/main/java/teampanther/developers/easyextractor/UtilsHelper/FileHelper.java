@@ -45,6 +45,11 @@ import teampanther.developers.easyextractor.R;
 
 public class FileHelper {
 
+    /*
+    Funcion encargada de hacer la copia del archivo, utilizando las propiedades del tipo File
+    En caso de ser directorio se aplica recursividad para por cada archivo dentro del directorio
+    este sea copiado a la nueva direccion.
+     */
     public static File copyFile(File src, File path) throws Exception {
 
         try {
@@ -78,6 +83,10 @@ public class FileHelper {
 
     //----------------------------------------------------------------------------------------------
 
+    /*
+    Funcion encargada de crear un directorio, nuevamente usando las caracteristicas del objeto tipo
+    file, para poder crearlo en caso de que no exista.
+     */
     public static File createDirectory(File path, String name) throws Exception {
 
         File directory = new File(path, name);
@@ -89,6 +98,11 @@ public class FileHelper {
         throw new Exception(String.format("Error creando %s", name));
     }
 
+    /*
+    Funcion encargada de borrar un archivo, si se trata de un archivo, en caso de que sea directorio
+    por cada archivo dentro del directorio se vuelve a llamar a la funcion para borrarse. Nuevamente
+    usando las propiedades de objeto tipo file.
+     */
     public static File deleteFile(File file) throws Exception {
 
         if (file.isDirectory()) {
@@ -104,6 +118,11 @@ public class FileHelper {
         throw new Exception(String.format("Error eliminando %s", file.getName()));
     }
 
+
+    /*
+    Funcion encargada de renombrar un archivo. Nuevamente usando las propiedades del objeto tipo
+    file.
+     */
     public static File renameFile(File file, String name) throws Exception {
 
         String extension = getExtension(file.getName());
@@ -117,6 +136,13 @@ public class FileHelper {
         throw new Exception(String.format("Error renombrando %s", file.getName()));
     }
 
+
+    /*
+    Funcion encargada de poder comprimir archivos en formato zip, requiere la lista de archivos a
+    comprimir y la direccion a donde se pondra. Divido esta funcion en otra mas por si alguno de
+    los archivos a comprimir es un directorio. Entonces se hace una busqueda recursiva para añadirlo
+    al zip.
+     */
     public static boolean zipFileAtPath(List<File> files, String toLocation){
         final int BUFFER = 2048;
         try {
@@ -151,6 +177,11 @@ public class FileHelper {
         return true;
     }
 
+    /*
+    Funcion complementaria de la creacion del zip donde si es directorio busco todos los archivos
+    que contenga, y en caso de que ya no tenga ni un solo archivo por cuestiones de organizacion,
+    conserve el directorio vacio.
+     */
     public static void zipSubFolder(ZipOutputStream out, File folder,
                               int basePathLength) throws IOException {
 
@@ -184,6 +215,11 @@ public class FileHelper {
         }
     }
 
+
+    /*
+    Luego esta la contraparte el descomprimir un archivo .zip donde ingresamos el zip, y por cada
+    archivo dentro del zip, lo ponemos dentro de la nueva carpeta con el nombre del zip.
+     */
     public static File unzip(File zip) throws Exception {
 
         File directory = createDirectory(zip.getParentFile(), removeExtension(zip.getName()));
@@ -224,19 +260,21 @@ public class FileHelper {
         return directory;
     }
 
-
+    /*
+    Funcion que retorna la direccion de la memoria interna.
+     */
     public static File getInternalStorage() {
-        //Funciona
-        //returns the path to the internal storage
-
         return Environment.getExternalStorageDirectory();
     }
 
     //----------------------------------------------------------------------------------------------
 
+    /*
+    Funcion que retorna la direccion de la memoria externa, aunque en algunos dispositivos funciona
+    y en otros no, por eso la deje en caso de utilizarla en caso de que el otro metodo mas efectivo
+    no funcione.
+     */
     public static File getExternalStorage() {
-        //en algunos dispositivos funciona
-        //returns the path to the external storage or null if it doesn't exist
         String path;
         if (Environment.isExternalStorageRemovable()){
             path = System.getenv("EXTERNAL_STORAGE");
@@ -250,6 +288,11 @@ public class FileHelper {
         return path != null ? new File(path) : null;
     }
 
+    /*
+    Funcion alternativa para obtener tanto la direccion de la memoria interna como la de la externa,
+    en este caso si se quiere invocar la interna se pasan los parametros context y false, y si se
+    quiere obtener la memoria externa se pasan los parametros context y true.
+     */
     public static String getStoragePath(Context mContext, boolean is_removale) {
         //Mejor alternativa
         StorageManager mStorageManager = (StorageManager) mContext.getSystemService(Context.STORAGE_SERVICE);
@@ -281,32 +324,39 @@ public class FileHelper {
         return null;
     }
 
+
+    /*
+    Funcion que retorna la direccion del directorio publico segun el tipo que se le pase en el
+    parametro. Actualmente no se usa debido a que no se requiere, pero esta listo para ser utilizado
+    cuando se requiera.
+     */
     public static File getPublicDirectory(String type) {
-
-        //returns the path to the public directory of the given type
-
         return Environment.getExternalStoragePublicDirectory(type);
     }
 
     //----------------------------------------------------------------------------------------------
 
+    /*
+    Funcion que obtiene la fecha de modificacion del archivo en el formato dia mes y año. Utilizadas
+    si se habilita la opcion de mostrar fecha en ajustes.
+     */
     public static String getLastModified(File file) {
-
-        //returns the last modified date of the given file as a formatted string
-
         return DateFormat.format("dd MMM yyy", new Date(file.lastModified())).toString();
     }
 
+    /*
+    Funcion que obtiene el mime tipo por el archivo pasado o null si es que no hay alguno.
+     */
     public static String getMimeType(File file) {
-
-        //returns the mime type for the given file or null iff there is none
-
         return MimeTypeMap.getSingleton().getMimeTypeFromExtension(getExtension(file.getName()));
     }
 
-    public static String getName(File file) {
 
-        //returns the name of the file hiding extensions of known file types
+    /*
+    Funcion que retorna el nombre del archivo ocultando las extensiones de los tipos de archivos
+    conocidos.
+     */
+    public static String getName(File file) {
 
         switch (FileType.getFileType(file)) {
 
@@ -321,13 +371,20 @@ public class FileHelper {
         }
     }
 
-    public static String getPath(File file) {
 
-        //returns the path of the given file or null if the file is null
+    /*
+    Funcion que retorna la direccion de donde esta ubicado el archivo o null si el archivo es null.
+     */
+    public static String getPath(File file) {
 
         return file != null ? file.getPath() : null;
     }
 
+
+    /*
+    Funcion que retorna el tamaño del archivo o si se trata de un directorio retorna vacio o el
+    numero de archivos que contiene.
+     */
     public static String getSize(Context context, File file) {
 
         if (file.isDirectory()) {
@@ -344,6 +401,11 @@ public class FileHelper {
         }
     }
 
+
+    /*
+    Funcion que nos retorna si el usuario puede o no usar Root, o si tiene o no habilitado el uso de
+    root en la aplicacion.
+     */
     public static boolean getStatusRoot(Context context){
         boolean retval=false;
         SharedPreferences sharedPreferences= context.getSharedPreferences("VALUES", Context.MODE_PRIVATE);
@@ -362,7 +424,10 @@ public class FileHelper {
     }
 
 
-
+    /*
+    Funcion auxiliar a getStatusRoot, y esta nos obtiene el si puede o no correr comandos root, para
+    saber si efectivamente cuenta el dispositivo con acceso root.
+     */
     public static boolean canRunRootCommands()
     {
         boolean retval = false;
@@ -421,6 +486,11 @@ public class FileHelper {
         return retval;
     }
 
+
+    /*
+    Funcion que ejecuta funciones a nivel kernel sin necesidad de terminal, en este caso no requiere
+    de root.
+     */
     public static String Executer(String command) {
 
         StringBuffer output = new StringBuffer();
@@ -444,6 +514,9 @@ public class FileHelper {
 
     }
 
+    /*
+    Funcion que me retorna si un archivo contiene o no symlinks
+     */
     public static boolean containsSymlink(File file) {
         try {
             return !file.getCanonicalFile().equals(file.getAbsoluteFile());
@@ -453,6 +526,11 @@ public class FileHelper {
         return false;
     }
 
+
+    /*
+    Funcion que me retorna el resultado de una consulta de comandos con permisos root, utilizo esta
+    para poder ejecutar acciones root.
+     */
     public static String sudoForResult(String...strings) {
         String res = "";
         DataOutputStream outputStream = null;
@@ -483,6 +561,10 @@ public class FileHelper {
         return res;
     }
 
+    /*
+    Funcion auxiliar a Sudoforresult que nos retorna los resultados de los comandos en un termino
+    leible.
+     */
     public static String readFully(InputStream is) throws IOException {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         byte[] buffer = new byte[1024];
@@ -493,6 +575,10 @@ public class FileHelper {
         return baos.toString("UTF-8");
     }
 
+    /*
+    Funcion que nos retorna si busybox esta instalado o no usando de la otra funcion para ejecutar
+    comandos con acceso root.
+     */
     public static Boolean getBusyboxInstalled(){
         Boolean flag= false;
         String ok= sudoForResult("busybox | head -1");
@@ -505,6 +591,10 @@ public class FileHelper {
         return flag;
     }
 
+    /*
+    Funcion que me retorna el total de memoria libre y usada del dispositivo, solo para fines
+    informativos, se suman ambas memorias.
+     */
     public static String getStorageUsage(Context context) {
 
         File internal = getInternalStorage();
@@ -533,6 +623,8 @@ public class FileHelper {
         return String.format("%s usados de %s", use, tot);
     }
 
+    /*
+     */
     public static String getTitle(File file) {
 
         try {
@@ -549,6 +641,9 @@ public class FileHelper {
         }
     }
 
+    /*
+    Funcion que retorna la extension del archivo o un string vacio si es que no contiene extension.
+     */
     public static String getExtension(String filename) {
 
         //returns the file extension or an empty string iff there is no extension
@@ -558,6 +653,9 @@ public class FileHelper {
 
     //----------------------------------------------------------------------------------------------
 
+    /*
+    Funcion que retorna el nombre de un archivo pero quitandole la extension.
+     */
     public static String removeExtension(String filename) {
 
         int index = filename.lastIndexOf(".");
@@ -565,6 +663,10 @@ public class FileHelper {
         return index != -1 ? filename.substring(0, index) : filename;
     }
 
+
+    /*
+    Funcion que compara las fechas de dos archivos.
+     */
     public static int compareDate(File file1, File file2) {
 
         long lastModified1 = file1.lastModified();
@@ -576,6 +678,9 @@ public class FileHelper {
 
     //----------------------------------------------------------------------------------------------
 
+    /*
+    Funcion que compara los nombres de dos archivos.
+     */
     public static int compareName(File file1, File file2) {
 
         String name1 = file1.getName();
@@ -585,6 +690,10 @@ public class FileHelper {
         return name1.compareToIgnoreCase(name2);
     }
 
+
+    /*
+    Funcion que compara los tamaños de dos archivos.
+     */
     public static int compareSize(File file1, File file2) {
 
         long length1 = file1.length();
@@ -596,6 +705,9 @@ public class FileHelper {
 
     //----------------------------------------------------------------------------------------------
 
+    /*
+    Funcion que retorna el resource icon para cada tipo de archivo especificado segun su mimetype.
+     */
     public static int getImageResource(File file) {
 
         switch (FileType.getFileType(file)) {
@@ -644,12 +756,19 @@ public class FileHelper {
         }
     }
 
+    /*
+    Funcion que nos dice si el archivo pasado como parametro es memoria de almacenamiento(Osea
+    si es la direccion de la memoria interna o externa)
+     */
     public static boolean isStorage(File dir,Context context) {
         return dir == null || dir.getPath().equals(getStoragePath(context,false)) || dir.getPath().equals(getStoragePath(context,true));
     }
 
     //----------------------------------------------------------------------------------------------
 
+    /*
+    Funcion que retorna un listado de archivos dentro de un directorio.
+     */
     public static File[] getChildren(File directory) {
 
         if (!directory.canRead()) return null;
@@ -664,7 +783,9 @@ public class FileHelper {
 
     //----------------------------------------------------------------------------------------------
 
-
+    /*
+    Funcion encargada de la busqueda de archivos en la memoria. Segun su nombre.
+     */
     public static ArrayList<File> searchFilesName(Context context, String name) {
 
         ArrayList<File> list = new ArrayList<>();
@@ -690,6 +811,9 @@ public class FileHelper {
         return list;
     }
 
+    /*
+    Funcion encargada de proporcionar un tipo de archivo segun su mymetipe.
+     */
     public enum FileType {
 
         DIRECTORY, MISC_FILE, AUDIO, IMAGE, VIDEO, DOC, PPT, XLS, PDF, TXT, ZIP, APK, IMG;

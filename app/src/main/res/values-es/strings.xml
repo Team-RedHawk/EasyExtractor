@@ -52,4 +52,5 @@
     <string name="error_direct_exist">Error el directorio existe</string>
     <string name="error_empty_string">Error no retorno nada el string</string>
     <string name="Error_no_permissions_or_space">No hay permisos para los archivos o no hay espacio suficiente.</string>
+    <string name="error_copy_file_helper">Error copiando %s</string>
 </resources>

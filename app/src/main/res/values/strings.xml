@@ -53,4 +53,5 @@
     <string name="error_direct_exist">Error direct exist</string>
     <string name="error_empty_string">Error not string result</string>
     <string name="Error_no_permissions_or_space">Error not permissions for files or insufficient space.</string>
+    <string name="error_copy_file_helper">Error copy %s</string>
 </resources>
