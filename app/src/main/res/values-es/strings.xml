@@ -1,15 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!--MenuItem Values-->
+    <string name="delete">Borrar</string>
+    <string name="rename">Renombrar</string>
+    <string name="copy">Copiar</string>
+    <string name="cut">Cortar</string>
+    <string name="Compress">Comprimir</string>
+    <string name="send">Enviar</string>
+    <string name="undo">Deshacer</string>
+    <string name="onefiledelete">1 archivo borrado</string>
+    <string name="filesdeletes">archivos borrados</string>
+    <string name="searchbyname">Busqueda por</string>
+    <string name="selected">seleccionados</string>
+    <string name="orderby">Ordenar por</string>
     <string name="action_settings">Ajustes</string>
     <string name="storage">Almacenamiento</string>
     <string name="internal">Interno</string>
     <string name="external">Externo</string>
     <string name="about">Acerca de</string>
     <string name="contact">Contacto</string>
-    <string name="delete">Borrar</string>
-    <string name="copy">Copiar</string>
-    <string name="cut">Cortar</string>
-    <string name="rename">Renombrar</string>
+
+
+
     <string name="zip">Zip</string>
     <string name="root">Root:</string>
     <string name="enablerootaccess">Habilitar acceso Root</string>
@@ -21,9 +33,9 @@
     <string name="Copyright">Copyright © 2017-2018</string>
     <string name="buscar">Buscar</string>
     <string name="move">Mover</string>
-    <string name="send">Enviar</string>
+
     <string name="action_sort">Ordenar</string>
-    <string name="Compress">Comprimir</string>
+
     <string name="ajustes_title_general">General</string>
     <string name="ajustes_extension">Ocultar extension</string>
     <string name="ajustes_date_modified">Mostrar fecha de modificacion</string>
