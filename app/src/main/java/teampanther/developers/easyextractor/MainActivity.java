@@ -1,8 +1,6 @@
 package teampanther.developers.easyextractor;
 
 import android.Manifest;
-import android.animation.Animator;
-import android.animation.AnimatorListenerAdapter;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
@@ -65,7 +63,6 @@ public class MainActivity extends AppCompatActivity {
     private static final String EXTRA_TYPE = "teampanther.developers.easyextractor.EXTRA_TYPE";
 
     private SharedPreferences sharedPreferences;
-    private SharedPreferences.Editor editor;
     private NavigationView navigationView;
     private CoordinatorLayout coordinatorLayout;
     private String name;
@@ -261,18 +258,18 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void initCoordinatorLayout() {
-        coordinatorLayout = (CoordinatorLayout) findViewById(R.id.coordinator_layout);
+        coordinatorLayout = findViewById(R.id.coordinator_layout);
     }
 
     private void initAppBarLayout() {
-        toolbarLayout = (CollapsingToolbarLayout) findViewById(R.id.collapsing_toolbar_layout);
-        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbarLayout = findViewById(R.id.collapsing_toolbar_layout);
+        toolbar = findViewById(R.id.toolbar);
         toolbar.setOverflowIcon(ContextCompat.getDrawable(this, R.drawable.ic_more));
         setSupportActionBar(toolbar);
     }
 
     private void initDrawerLayout() {
-        drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+        drawerLayout = findViewById(R.id.drawer_layout);
         if (drawerLayout == null) return;
         if (name != null || type != null) {
             drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
@@ -280,8 +277,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void initFloatingActionButton() {
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.add_folder);
-        menu = (FloatingActionMenu) findViewById(R.id.fab);
+        FloatingActionButton fab = findViewById(R.id.add_folder);
+        menu = findViewById(R.id.fab);
         //Menu en forma de circulo
         //menu.setMultipleOfFB(3.2f);
         //menu.setIsCircle(true);
@@ -326,7 +323,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void initNavigationView() {
 
-        navigationView = (NavigationView) findViewById(R.id.nav_view);
+        navigationView = findViewById(R.id.nav_view);
 
         if (navigationView == null) return;
 
@@ -388,7 +385,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        TextView textView = (TextView) navigationView.getHeaderView(0).findViewById(R.id.textView);
+        TextView textView = navigationView.getHeaderView(0).findViewById(R.id.textView);
 
         textView.setText(getStorageUsage(this));
 
@@ -488,7 +485,7 @@ public class MainActivity extends AppCompatActivity {
             adapter.setSpanCount(1);
         }
 
-        RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
+        RecyclerView recyclerView = findViewById(R.id.recycler_view);
 
         if (recyclerView != null) recyclerView.setAdapter(adapter);
     }
@@ -499,11 +496,11 @@ public class MainActivity extends AppCompatActivity {
 
             int selectedItemCount = adapter.getSelectedItemCount();
 
-            toolbarLayout.setTitle(String.format("%s seleccionados", selectedItemCount));
+            toolbarLayout.setTitle(String.format("%s %s", selectedItemCount, getResources().getString(R.string.selected)));
         }
         else if (name != null) {
 
-            toolbarLayout.setTitle(String.format("Busqueda por %s", name));
+            toolbarLayout.setTitle(String.format("%s %s",getResources().getString(R.string.searchbyname), name));
         }
         else if (type != null) {
 
@@ -709,10 +706,11 @@ public class MainActivity extends AppCompatActivity {
 
         adapter.removeAll(files);
 
-        String message = String.format("%s archivos borrados", files.size());
+        String message = (files.size() == 1) ? String.format(getResources().getString(R.string.onefiledelete)) :
+                String.format("%s %s",files.size(), getResources().getString(R.string.filesdeletes));
 
         Snackbar.make(coordinatorLayout, message, Snackbar.LENGTH_LONG)
-                .setAction("Deshacer", new View.OnClickListener() {
+                .setAction(R.string.undo, new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
 
@@ -749,7 +747,7 @@ public class MainActivity extends AppCompatActivity {
 
         final List<File> selectedItems = adapter.getSelectedItems();
 
-        InputDialog inputDialog = new InputDialog(this, "Renombrar", "Renombrar") {
+        InputDialog inputDialog = new InputDialog(this, getResources().getString(R.string.rename), getResources().getString(R.string.rename)) {
 
             @Override
             public void onActionClick(String text) {
@@ -904,7 +902,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        builder.setTitle("Ordenar por");
+        builder.setTitle(R.string.orderby);
 
         builder.show();
     }

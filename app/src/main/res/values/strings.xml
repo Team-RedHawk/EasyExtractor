@@ -3,6 +3,13 @@
 
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="undo">Undo</string>
+    <string name="onefiledelete">1 File Delete</string>
+    <string name="filesdeletes">Files Deletes</string>
+    <string name="searchbyname">Search by</string>
+    <string name="selected">Selected</string>
+    <string name="orderby">Order by</string>
+
 
     <string name="action_settings">Settings</string>
     <string name="storage">Storage</string>

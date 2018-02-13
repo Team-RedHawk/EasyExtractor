@@ -16,7 +16,6 @@ import android.content.SharedPreferences;
 public class SplashActivity extends AppCompatActivity {
 
     SharedPreferences sharedPreferences;
-    SharedPreferences.Editor editor;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,7 +35,7 @@ public class SplashActivity extends AppCompatActivity {
 
         //Animacion de Splash Screen
 
-        ImageView splash = (ImageView) findViewById(R.id.splash_img);
+        ImageView splash = findViewById(R.id.splash_img);
         Animation animation = AnimationUtils.loadAnimation(getApplicationContext(),R.anim.transparent_animation);
         animation.reset();
         splash.setAnimation(animation);
@@ -47,7 +46,7 @@ public class SplashActivity extends AppCompatActivity {
 
         //TextView con nombre de version etc
 
-        TextView texto = (TextView)findViewById(R.id.label_splash);
+        TextView texto = findViewById(R.id.label_splash);
         animation.reset();
         texto.setAnimation(animation);
         animation.reset();
