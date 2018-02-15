@@ -53,15 +53,10 @@ import java.util.Locale;
 
 
 public class MainActivity extends AppCompatActivity {
-
     private static final String SAVED_DIRECTORY = "teampanther.developers.easyextractor.SAVED_DIRECTORY";
-
     private static final String SAVED_SELECTION = "teampanther.developers.easyextractor.SAVED_SELECTION";
-
     private static final String EXTRA_NAME = "teampanther.developers.easyextractor.EXTRA_NAME";
-
     private static final String EXTRA_TYPE = "teampanther.developers.easyextractor.EXTRA_TYPE";
-
     private SharedPreferences sharedPreferences;
     private NavigationView navigationView;
     private CoordinatorLayout coordinatorLayout;
@@ -74,6 +69,11 @@ public class MainActivity extends AppCompatActivity {
     private CollapsingToolbarLayout toolbarLayout;
     private FloatingActionMenu menu;
 
+
+    /*
+    Al crearse la activity invoco a los metodos, separo todos para mejor organizacion de modulos
+    pero practicamente se invocan desde aqui.
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         initActivityFromIntent();
@@ -91,6 +91,16 @@ public class MainActivity extends AppCompatActivity {
         invalidateTitle();
     }
 
+
+    /*
+    Metodo al presionar back o retroceder en el movil. En esta parte especifico los eventos que
+    pueden ocurrir en caso de que presionen back. La primer condicional es en caso de que el
+    panel lateral este abierto, lo cierra. La segunda condicional es para deshacer la lista de
+    seleccion de multiples objetos, si es que aun ahi algo seleccionado pues lo limpie y regrese a
+    la vista normal. Luego sigue la ultima condicional donde checamos que la direccion actual de
+    directorio sea diferente de la direccion root de algun almacenamiento, permita retroceder entre
+    directorios. Y el ultimo parametro pues es el super constructor del metodo onback
+     */
     @Override
     public void onBackPressed() {
 
@@ -118,7 +128,12 @@ public class MainActivity extends AppCompatActivity {
         super.onBackPressed();
     }
 
-
+    /*
+    Metodo exclusivo para versiones mayores a M, donde se debe dar los permisos manualmente para que
+    la app funcione bien. Solo checo si los permisos estan concedidos o no, y en caso de que no pues
+    entonces se lance un mensaje que pida los permisos. Si ya estan concedidos simplemente carga el
+    view con los directorios y archivos.
+     */
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
 
@@ -144,6 +159,10 @@ public class MainActivity extends AppCompatActivity {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
 
+    /*
+    Metodo en caso de que la actividad sea reiniciada, invoca esto y pues si el adaptador es null,
+    refresca los datos para volver a llenar el adaptador.
+     */
     @Override
     protected void onResume() {
 
@@ -152,6 +171,10 @@ public class MainActivity extends AppCompatActivity {
         super.onResume();
     }
 
+
+    /*
+    En caso de guardar la instancia.
+     */
     @Override
     public void onRestoreInstanceState(Bundle savedInstanceState) {
 
@@ -164,6 +187,10 @@ public class MainActivity extends AppCompatActivity {
         super.onRestoreInstanceState(savedInstanceState);
     }
 
+    /*
+    Metodo que guarda una instancia para una mayor rapidez entre vistas, asi evita la carga de nuevo
+    de elementos que antes ya estaban, si no se modifica nada.
+     */
     @Override
     public void onSaveInstanceState(Bundle outState) {
 
@@ -174,7 +201,9 @@ public class MainActivity extends AppCompatActivity {
         super.onSaveInstanceState(outState);
     }
 
-
+    /*
+    Metodo que agrega los elementos al menu.
+    */
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
 
@@ -183,11 +212,16 @@ public class MainActivity extends AppCompatActivity {
         return true;
     }
 
+
+    /*
+    Metodo que captura si algun item del menu es seleccionado.
+    */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
 
         switch (item.getItemId()) {
-
+            //Si algun elemento es seleccionado dependiendo del elemento este lanza un metodo segun
+            //lo que se haya seleccionado.
             case R.id.action_delete:
                 actionDelete();
                 return true;
@@ -225,6 +259,10 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    /*
+    Metodo que es invocado antes de mostrar el menu, y donde especifico si debe o no visualizarse
+    dependiendo de si es o no seleccionado algun objeto(directorio o archivo).
+     */
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
 
@@ -252,15 +290,25 @@ public class MainActivity extends AppCompatActivity {
         return super.onPrepareOptionsMenu(menu);
     }
 
+    /*
+    Actualmente no usado
+     */
     private void initActivityFromIntent() {
         name = getIntent().getStringExtra(EXTRA_NAME);
         type = getIntent().getStringExtra(EXTRA_TYPE);
     }
 
+    /*
+    Inicializo el coordinator layout, indispensable para poder mostrar los mensajes de error o exito.
+     */
     private void initCoordinatorLayout() {
         coordinatorLayout = findViewById(R.id.coordinator_layout);
     }
 
+    /*
+    Metodo de inicializacion del AppBar donde se define el toolbar colapsable, el toolbar y se le
+    asigna al actionbar.
+     */
     private void initAppBarLayout() {
         toolbarLayout = findViewById(R.id.collapsing_toolbar_layout);
         toolbar = findViewById(R.id.toolbar);
@@ -268,6 +316,9 @@ public class MainActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
     }
 
+    /*
+    Metodo de inicializacion del panel lateral
+     */
     private void initDrawerLayout() {
         drawerLayout = findViewById(R.id.drawer_layout);
         if (drawerLayout == null) return;
@@ -276,8 +327,16 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+
+    /*
+    Metodo de inicializacion del boton flotante tanto del que esta para agregar un nuevo directorio
+    como del exclusivo para la carpeta de unpack repack img.
+     */
     private void initFloatingActionButton() {
+        //fab es el boton flotante para agregar un nuevo directorio.
         FloatingActionButton fab = findViewById(R.id.add_folder);
+
+        //menu es el boton flotante esclusivo para las acciones unpack repack img
         menu = findViewById(R.id.fab);
         //Menu en forma de circulo
         //menu.setMultipleOfFB(3.2f);
@@ -310,6 +369,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        //Condicional que hace que se oculte el boton automaticamente al colapsar el toolbar.
         if (name != null || type != null) {
             ViewGroup.LayoutParams layoutParams = fab.getLayoutParams();
 
@@ -321,6 +381,9 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    /*
+    Metodo que inicializa el panel lateral.
+     */
     private void initNavigationView() {
 
         navigationView = findViewById(R.id.nav_view);
@@ -397,10 +460,15 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+
+    /*
+    Metodo que se encarga de llenar la vista con los objetos obtenidos(directorios y archivos).
+     */
     private void loadIntoRecyclerView() {
 
         String permission = Manifest.permission.WRITE_EXTERNAL_STORAGE;
-
+        //Condicional que verifica si se han concedido los permisos necesarios en ANDROID M y superiores
+        //en caso de que no sea asi pues se piden los permisos.
         if (PackageManager.PERMISSION_GRANTED != ContextCompat.checkSelfPermission(this, permission)) {
 
             ActivityCompat.requestPermissions(this, new String[]{permission}, 0);
@@ -410,6 +478,7 @@ public class MainActivity extends AppCompatActivity {
 
         final Context context = this;
 
+        //En caso de busqueda entonces se actualizan los datos de la vista con los resultados de la busqueda.
         if (name != null) {
 
             adapter.addAll(searchFilesName(context, name));
@@ -417,6 +486,7 @@ public class MainActivity extends AppCompatActivity {
             return;
         }
 
+        //actualmente no utilizado
         if (type != null) {
 
             /*switch (type) {
@@ -437,9 +507,13 @@ public class MainActivity extends AppCompatActivity {
             return;*/
         }
 
+        //por defecto se asigna la vista el almacenamiento interno.
         setPath(getInternalStorage());
     }
 
+    /*
+    Metodo que inicializa el adaptador y el recyclerview para obttener los objetos(directorios y archivos)
+     */
     private void initRecyclerView() {
 
         adapter = new Adapter(this);
@@ -490,6 +564,10 @@ public class MainActivity extends AppCompatActivity {
         if (recyclerView != null) recyclerView.setAdapter(adapter);
     }
 
+
+    /*
+    Metodo que asigna un titulo al toolbar.
+     */
     private void invalidateTitle() {
 
         if (adapter.anySelected()) {
@@ -529,6 +607,10 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    /*
+    Metodo que dependiendo de lo que este realizando se cambia el aspecto en iconos que se agregan
+    al toolbar.
+     */
     private void invalidateToolbar() {
 
         if (adapter.anySelected()) {
@@ -564,13 +646,18 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-
+    /*
+    Metodo que asigna el tema a la aplicacion con respecto al ultimo seleccionado o guardado.
+     */
     public void theme() {
         sharedPreferences = getSharedPreferences("VALUES", Context.MODE_PRIVATE);
         int theme = sharedPreferences.getInt("THEME", 1);
         settingTheme(theme);
     }
 
+    /*
+    Metodo de apoyo al anterior metodo theme, que asigna segun el tema seleccionado.
+     */
     public void settingTheme(int theme) {
         switch (theme) {
             case 1:
@@ -585,22 +672,34 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    /*
+    Metodo que muestra un mensaje pasando como parametro una excepcion.
+     */
     private void showMessage(Exception e) {
 
         showMessage(e.getMessage());
     }
 
+    /*
+    Metodo que muestra un mensaje pasando como parametro un string.
+     */
     private void showMessage(String message) {
 
         Snackbar.make(coordinatorLayout, message, Snackbar.LENGTH_SHORT).show();
     }
 
 
+    /*
+    Metodo que lanza una actividad, en este caso la de ajustes de la app.
+     */
     private void gotoSettings() {
 
         startActivity(new Intent(this, SettingsActivity.class));
     }
 
+    /*
+    Metodo que abre los ajustes del telefono, para asignar permisos.
+     */
     private void gotoApplicationSettings() {
 
         Intent intent = new Intent();
@@ -612,6 +711,10 @@ public class MainActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
+    /*
+    Metodo que asigna la direccion segun el archivo pasado, y actualiza la vista con los objetos
+    contenidos en la nueva direccion.
+     */
     private void setPath(File directory) {
 
         if (!directory.exists()) {
@@ -620,7 +723,9 @@ public class MainActivity extends AppCompatActivity {
 
             return;
         }
-
+        //Si la opcion de unpack repack es habilitada pasamos esta condicional. Y si el directorio
+        //que se asigna es el que se escogio en los ajustes entonces mostramos el boton flotante
+        //para las herramientas de unpack repack.
         if (sharedPreferences.getBoolean("TOOLENABLE",false)){
             if (directory.getAbsolutePath().equals(sharedPreferences.getString("PATHTOOL",""))){
                 menu.setVisibility(VISIBLE);
@@ -641,6 +746,10 @@ public class MainActivity extends AppCompatActivity {
         invalidateTitle();
     }
 
+    /*
+    Asigna el nombre de busqueda en la activity para despues capturarla y asignarla a los resultados
+    de busqueda.
+     */
     private void setName(String name) {
 
         Intent intent = new Intent(this, MainActivity.class);
@@ -650,6 +759,10 @@ public class MainActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
+
+    /*
+    Actualmente no usado
+     */
     private void setType(String type) {
 
         Intent intent = new Intent(this, MainActivity.class);
@@ -669,6 +782,10 @@ public class MainActivity extends AppCompatActivity {
 
     //--Actions -->
 
+    /*
+    Metodo encargado de crear un directorio e invoco un dialog emergente para que le asigne el nuevo
+    directorio y posterior a ello actualizo la vista con el nuevo directorio.
+     */
     private void actionCreate() {
 
         InputDialog inputDialog = new InputDialog(this, "Crear", "Crear directorio") {
@@ -693,6 +810,9 @@ public class MainActivity extends AppCompatActivity {
         inputDialog.show();
     }
 
+    /*
+    Metodo para borrar.
+     */
     private void actionDelete() {
 
         actionDelete(adapter.getSelectedItems());
@@ -700,6 +820,9 @@ public class MainActivity extends AppCompatActivity {
         adapter.clearSelection();
     }
 
+    /*
+    Metodo para borrar segun la lista seleccionada
+     */
     private void actionDelete(final List<File> files) {
 
         final File sourceDirectory = currentDirectory;
@@ -743,6 +866,10 @@ public class MainActivity extends AppCompatActivity {
                 .show();
     }
 
+
+    /*
+    Metodo para renombrar un archivo o directorio.
+     */
     private void actionRename() {
 
         final List<File> selectedItems = adapter.getSelectedItems();
@@ -797,6 +924,9 @@ public class MainActivity extends AppCompatActivity {
         inputDialog.show();
     }
 
+    /*
+    Metodo para realizar una busqueda.
+     */
     private void actionSearch() {
 
         InputDialog inputDialog = new InputDialog(this, "Buscar", "Buscar") {
@@ -811,6 +941,9 @@ public class MainActivity extends AppCompatActivity {
         inputDialog.show();
     }
 
+    /*
+    Metodo para realizar la copia de archivos o directorios.
+     */
     private void actionCopy() {
 
         List<File> selectedItems = adapter.getSelectedItems();
@@ -820,6 +953,9 @@ public class MainActivity extends AppCompatActivity {
         transferFiles(selectedItems, false);
     }
 
+    /*
+    Metodo para mover archivos o directorios
+     */
     private void actionMove() {
 
         List<File> selectedItems = adapter.getSelectedItems();
@@ -829,6 +965,9 @@ public class MainActivity extends AppCompatActivity {
         transferFiles(selectedItems, true);
     }
 
+    /*
+    Metodo que realiza la compresion de archivos en formato zip.
+     */
     private void actionZip(){
         InputDialog inputDialog = new InputDialog(this, "Comprimir", "Nombre de Archivo nuevo") {
             @Override
@@ -836,6 +975,7 @@ public class MainActivity extends AppCompatActivity {
                 final List<File> selecteditems= adapter.getSelectedItems();
                 adapter.clearSelection();
                 final ProgressDialog dialog = ProgressDialog.show(MainActivity.this, "", "Comprimiendo", true);
+                //Ocupo un hilo para no bloquear el hilo principal y realizar en background la compresion.
                 Thread t= new Thread(new Runnable() {
                     @Override
                     public void run() {
@@ -862,6 +1002,9 @@ public class MainActivity extends AppCompatActivity {
         inputDialog.show();
     }
 
+    /*
+    Metodo para enviar o compartir archivos o directorios.
+     */
     private void actionSend() {
 
         Intent intente = new Intent(Intent.ACTION_SEND_MULTIPLE);
@@ -880,6 +1023,10 @@ public class MainActivity extends AppCompatActivity {
         startActivity(intente);
     }
 
+
+    /*
+    Metodo que organiza la vista segun lo seleccionado.
+     */
     private void actionSort() {
 
         final AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -909,6 +1056,7 @@ public class MainActivity extends AppCompatActivity {
 
     //----------------------------------------------------------------------------------------------
 
+    //Metodo que segun lo que se desee hacer mueve o copia los archivos.
     private void transferFiles(final List<File> files, final Boolean delete) {
 
         String paste = delete ? "movido(s)" : "copiado(s)";
@@ -943,6 +1091,7 @@ public class MainActivity extends AppCompatActivity {
 
     //-- Scripts Action -->
 
+    //Metodo que pretende lanzar la accion de unpack donde lanzo el scriptdialog con la opcion de unpack
     public void ScriptUnpack(){
         final InputDialog inputDialog = new InputDialog(this, "Aceptar", "Nombre del archivo img") {
             @Override
@@ -978,11 +1127,14 @@ public class MainActivity extends AppCompatActivity {
         inputDialog.show();
     }
 
+    /*
+    Metodo para repack script aun en construccion XD
+     */
     public void ScriptRepack(){
 
     }
 
-    //Creamos la clase xD
+    //Implementacion de si se le da click a un item.
     private final class OnItemClickListener implements teampanther.developers.easyextractor.RecyclerView.OnItemClickListener {
 
         private final Context context;
