@@ -1,6 +1,5 @@
 <resources>
     <string name="app_name">Easy Extractor</string>
-
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
     <string name="undo">Undo</string>
@@ -9,8 +8,6 @@
     <string name="searchbyname">Search by</string>
     <string name="selected">Selected</string>
     <string name="orderby">Order by</string>
-
-
     <string name="action_settings">Settings</string>
     <string name="storage">Storage</string>
     <string name="internal">Internal</string>
@@ -26,7 +23,7 @@
     <string name="enablerootaccess">Enabled Root Access</string>
     <string name="theme">Theme</string>
     <string name="dark">Dark</string>
-    <string name="Copyright">Copyright © 2017-2018</string>
+    <string name="Copyright">Copyright © 2017–2018</string>
     <string name="buscar">Search</string>
     <string name="move">Move</string>
     <string name="send">Send</string>
@@ -61,4 +58,9 @@
     <string name="error_empty_string">Error not string result</string>
     <string name="Error_no_permissions_or_space">Error not permissions for files or insufficient space.</string>
     <string name="error_copy_file_helper">Error copy %s</string>
+    <string name="title_custom">Additional features</string>
+    <string name="custom_wallpaper">Wallpapers</string>
+    <string name="custom_device_info">Device information</string>
+    <string name="custom_device_copy">Copy</string>
+    <string name="custom_device_share">Share</string>
 </resources>

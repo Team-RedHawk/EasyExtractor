@@ -65,4 +65,9 @@
     <string name="error_empty_string">Error no retorno nada el string</string>
     <string name="Error_no_permissions_or_space">No hay permisos para los archivos o no hay espacio suficiente.</string>
     <string name="error_copy_file_helper">Error copiando %s</string>
+    <string name="title_custom">Extras</string>
+    <string name="custom_wallpaper">Fondos de Pantalla</string>
+    <string name="custom_device_info">Informacion del dispositivo</string>
+    <string name="custom_device_copy">Copiar</string>
+    <string name="custom_device_share">Compartir</string>
 </resources>
