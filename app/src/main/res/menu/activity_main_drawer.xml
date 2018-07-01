@@ -18,6 +18,19 @@
         </item>
     </group>
 
+    <group>
+        <item android:title="@string/title_custom">
+            <menu>
+                <item android:id="@+id/Wallpapers"
+                    android:icon="@drawable/ic_image"
+                    android:title="@string/custom_wallpaper"/>
+                <item android:id="@+id/Device_info"
+                    android:icon="@drawable/ic_device_info"
+                    android:title="@string/custom_device_info"/>
+            </menu>
+        </item>
+    </group>
+
     <group
         android:id="@+id/navigation_group3" >
 
