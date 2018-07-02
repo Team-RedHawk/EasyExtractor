@@ -415,6 +415,9 @@ public class MainActivity extends AppCompatActivity {
                         About_dialog dialog = new About_dialog();
                         dialog.show(fragmentManager, "About_Dialog");
                         return true;
+                    case R.id.Device_info:
+                        gotoDevice();
+                        return true;
 
                 /*case R.id.navigation_directory_0:
                     setPath(getPublicDirectory("DCIM"));
@@ -695,6 +698,10 @@ public class MainActivity extends AppCompatActivity {
     private void gotoSettings() {
 
         startActivity(new Intent(this, SettingsActivity.class));
+    }
+
+    private void gotoDevice(){
+        startActivity(new Intent(this, DeviceActivity.class));
     }
 
     /*

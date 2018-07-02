@@ -70,4 +70,6 @@
     <string name="custom_device_info">Informacion del dispositivo</string>
     <string name="custom_device_copy">Copiar</string>
     <string name="custom_device_share">Compartir</string>
+    <string name="custom_device_copy_all">Copiar Todo</string>
+    <string name="custom_device_share_all">Compartir todo</string>
 </resources>
