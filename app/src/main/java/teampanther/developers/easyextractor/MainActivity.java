@@ -22,6 +22,7 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.content.FileProvider;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
@@ -50,9 +51,11 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 
 
 public class MainActivity extends AppCompatActivity {
+    private static final String AUTORITHY= "teampanther.developers.easyextractor.provider";
     private static final String SAVED_DIRECTORY = "teampanther.developers.easyextractor.SAVED_DIRECTORY";
     private static final String SAVED_SELECTION = "teampanther.developers.easyextractor.SAVED_SELECTION";
     private static final String EXTRA_NAME = "teampanther.developers.easyextractor.EXTRA_NAME";
@@ -407,7 +410,9 @@ public class MainActivity extends AppCompatActivity {
                         return true;
 
                     case R.id.external:
-                        setPath(new File(getStoragePath(MainActivity.this, true)));
+                        if (getStoragePath(MainActivity.this, true) != null) {
+                            setPath(new File(Objects.requireNonNull(getStoragePath(MainActivity.this, true))));
+                        }
                         return true;
 
                     case R.id.about:
@@ -1217,15 +1222,20 @@ public class MainActivity extends AppCompatActivity {
                 }else {
 
                     try {
+                        Intent intent;
+                        if (Build.VERSION.SDK_INT < 24) {
+                            intent = new Intent(Intent.ACTION_VIEW);
+                            intent.setDataAndType(Uri.fromFile(file), getMimeType(file));
+                            startActivity(intent);
+                        } else {
+                            intent = new Intent(Intent.ACTION_VIEW);
+                            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                            intent.setDataAndType(FileProvider.getUriForFile(context, AUTORITHY, file), getMimeType(file));
+                            startActivity(intent);
+                        }
 
-                        Intent intent = new Intent(Intent.ACTION_VIEW);
-
-                        intent.setDataAndType(Uri.fromFile(file), getMimeType(file));
-
-                        startActivity(intent);
                     }
                     catch (Exception e) {
-
                         showMessage(String.format("No hay aplicacion para abrir %s", getName(file)));
                     }
                 }

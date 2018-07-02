@@ -5,13 +5,15 @@ import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Point;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.v4.app.NavUtils;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.DisplayMetrics;
+import android.view.Display;
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -45,31 +47,34 @@ public class DeviceActivity extends AppCompatActivity {
     private void setUpRecycler() {
         mRecyclerView = findViewById(R.id.recycler_device_info);
         items.add(new DeviceInfo("VERSION.RELEASE", Build.VERSION.RELEASE));
-        items.add(new DeviceInfo("VERSION.INCREMENTAL" ,Build.VERSION.INCREMENTAL));
         items.add(new DeviceInfo("VERSION.SDK.NUMBER",String.valueOf(Build.VERSION.SDK_INT )));
         items.add(new DeviceInfo("BOARD",Build.BOARD));
         items.add(new DeviceInfo("BOOTLOADER",Build.BOOTLOADER));
         items.add(new DeviceInfo("BRAND",Build.BRAND));
-        items.add(new DeviceInfo("CPU_ABI",Build.CPU_ABI));
-        items.add(new DeviceInfo("CPU_ABI2",Build.CPU_ABI2));
-        items.add(new DeviceInfo("DISPLAY",Build.DISPLAY));
-        items.add(new DeviceInfo("FINGERPRINT",Build.FINGERPRINT));
         items.add(new DeviceInfo("HARDWARE",Build.HARDWARE));
         items.add(new DeviceInfo("HOST",Build.HOST));
         items.add(new DeviceInfo("ID",Build.ID));
         items.add(new DeviceInfo("MANUFACTURER",Build.MANUFACTURER));
         items.add(new DeviceInfo("MODEL",Build.MODEL));
         items.add(new DeviceInfo("PRODUCT",Build.PRODUCT));
-        items.add(new DeviceInfo("SERIAL",Build.SERIAL));
-        items.add(new DeviceInfo("TAGS",Build.TAGS));
-        items.add(new DeviceInfo("TIME",String.valueOf(Build.TIME)));
-        items.add(new DeviceInfo("TYPE",Build.TYPE));
-        items.add(new DeviceInfo("UNKNOWN",Build.UNKNOWN));
-        items.add(new DeviceInfo("USER",Build.USER));
-        DeviceAdapter mAdapter = new DeviceAdapter(items);
+        items.add(new DeviceInfo("DENSITY", getDpiDevice()));
+        items.add(new DeviceInfo("KERNEL",System.getProperty("os.version")));
+        items.add(new DeviceInfo("SCREEN RESOLUTION",getDeviceScreenResolution()));
+        DeviceAdapter mAdapter = new DeviceAdapter(items, context);
         mRecyclerView.setAdapter(mAdapter);
         mRecyclerView.setHasFixedSize(true);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+    }
+
+    public String getDeviceScreenResolution() {
+        Display display = this.getWindowManager().getDefaultDisplay();
+        Point size = new Point();
+        display.getSize(size);
+
+        int width = size.x; //device width
+        int height = size.y; //device height
+
+        return "" + width + " x " + height; //example "480 * 800"
     }
 
     @Override
@@ -96,9 +101,19 @@ public class DeviceActivity extends AppCompatActivity {
         }
 
         if (id == R.id.action_sendD){
+            Intent sendIntent = new Intent();
+            sendIntent.setAction(Intent.ACTION_SEND);
+            sendIntent.putExtra(Intent.EXTRA_TEXT, getInformationDevice());
+            sendIntent.setType("text/plain");
+            startActivity(sendIntent);
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    public String getDpiDevice(){
+        DisplayMetrics metrics = getResources().getDisplayMetrics();
+        return String.valueOf(metrics.densityDpi);
     }
 
     private String getInformationDevice() {

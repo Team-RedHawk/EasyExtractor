@@ -1,6 +1,9 @@
 package teampanther.developers.easyextractor.RecyclerView;
 
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.content.Context;
+import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,13 +13,14 @@ import java.util.LinkedList;
 
 import teampanther.developers.easyextractor.R;
 
+import static android.content.Context.CLIPBOARD_SERVICE;
+
 public class DeviceAdapter extends RecyclerView.Adapter<DeviceViewHolder>{
-    Context context;
-    LayoutInflater inflater;
-    LinkedList<DeviceInfo> items;
+    private LinkedList<DeviceInfo> items;
+    private Context context;
 
-    public DeviceAdapter(LinkedList<DeviceInfo> items){
-
+    public DeviceAdapter(LinkedList<DeviceInfo> items, Context context){
+        this.context = context;
         this.items = items;
     }
 
@@ -26,33 +30,38 @@ public class DeviceAdapter extends RecyclerView.Adapter<DeviceViewHolder>{
     public DeviceViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View v= LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.device_card_info, parent, false);
-
-        DeviceViewHolder viewHolder=new DeviceViewHolder(v);
-        return viewHolder;
+        return new DeviceViewHolder(v);
     }
 
     @Override
-    public void onBindViewHolder(DeviceViewHolder holder, int position) {
+    public void onBindViewHolder(final DeviceViewHolder holder, final int position) {
         holder.titleD.setText(items.get(position).getNombre());
         holder.valueD.setText(items.get(position).getDesc());
-        holder.shareD.setOnClickListener(sharelistener);
-        holder.copyD.setOnClickListener(copylistener);
+        holder.shareD.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent sendIntent = new Intent();
+                sendIntent.setAction(Intent.ACTION_SEND);
+                sendIntent.putExtra(Intent.EXTRA_TEXT, getClipInfo(items.get(holder.getAdapterPosition())));
+                sendIntent.setType("text/plain");
+                context.startActivity(sendIntent);
+            }
+        });
+        holder.copyD.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ClipData clip = ClipData.newPlainText("text", getClipInfo(items.get(holder.getAdapterPosition())));
+                ClipboardManager clipboard = (ClipboardManager)context.getSystemService(CLIPBOARD_SERVICE);
+                assert clipboard != null;
+                clipboard.setPrimaryClip(clip);
+            }
+        });
     }
 
-    View.OnClickListener sharelistener=new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            //overyde
+    public String getClipInfo(DeviceInfo info){
+        return info.getNombre()+": "+info.getDesc();
+    }
 
-        }
-    };
-
-    View.OnClickListener copylistener= new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            //overryde
-        }
-    };
 
     @Override
     public int getItemCount() {
