@@ -9,9 +9,13 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.design.widget.CollapsingToolbarLayout;
@@ -30,6 +34,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -72,6 +77,8 @@ public class MainActivity extends AppCompatActivity {
     private CollapsingToolbarLayout toolbarLayout;
     private FloatingActionMenu materialDesignFAM;
     private FloatingActionButton floatingActionButton1, floatingActionButton2, floatingActionButton3;
+    private LinearLayout image;
+    private int REQUEST_CODE = 1;
 
     /*
     Al crearse la activity invoco a los metodos, separo todos para mejor organizacion de modulos
@@ -92,6 +99,7 @@ public class MainActivity extends AppCompatActivity {
         loadIntoRecyclerView();
         invalidateToolbar();
         invalidateTitle();
+        image = (LinearLayout) findViewById(R.id.banner);
     }
 
 
@@ -1170,6 +1178,34 @@ public class MainActivity extends AppCompatActivity {
     public void ScriptRepack(){
 
     }
+    public void cIMG(View view) {
+        cargarIMG();
+    }
+
+    private void cargarIMG() {
+        Intent intent = new Intent();
+        intent.setType("image/");
+        intent.setAction(intent.ACTION_GET_CONTENT);
+        startActivityForResult(intent.createChooser(intent,"Seleccione la aplicacion"), REQUEST_CODE);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(resultCode==RESULT_OK){
+                Uri path=data.getData();
+                try {
+                    image.setBackground(Drawable.createFromPath(String.valueOf(path.getPath())));
+                    Toast.makeText(this, path.toString(), Toast.LENGTH_SHORT).show();
+                }catch (Exception e){
+                    Toast.makeText(this, "Error"+e, Toast.LENGTH_SHORT).show();
+                }
+                
+            }
+
+    }
+
+
 
     //Implementacion de si se le da click a un item.
     private final class OnItemClickListener implements teampanther.developers.easyextractor.RecyclerView.OnItemClickListener {
