@@ -16,7 +16,6 @@ import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.CoordinatorLayout;
-import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
@@ -34,6 +33,9 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.github.clans.fab.FloatingActionButton;
+import com.github.clans.fab.FloatingActionMenu;
+
 import teampanther.developers.easyextractor.Dialogs.About_dialog;
 import teampanther.developers.easyextractor.Dialogs.ScriptDialog;
 import teampanther.developers.easyextractor.RecyclerView.Adapter;
@@ -41,8 +43,6 @@ import teampanther.developers.easyextractor.RecyclerView.OnItemSelectedListener;
 import teampanther.developers.easyextractor.Dialogs.InputDialog;
 import teampanther.developers.easyextractor.UtilsHelper.FileHelper;
 import teampanther.developers.easyextractor.UtilsHelper.PreferenceUtil;
-
-import terranovaproductions.newcomicreader.FloatingActionMenu;
 
 import static android.view.View.VISIBLE;
 import static teampanther.developers.easyextractor.UtilsHelper.FileHelper.*;
@@ -70,8 +70,8 @@ public class MainActivity extends AppCompatActivity {
     private Adapter adapter;
     private File currentDirectory;
     private CollapsingToolbarLayout toolbarLayout;
-    private FloatingActionMenu menu;
-
+    private FloatingActionMenu materialDesignFAM;
+    private FloatingActionButton floatingActionButton1, floatingActionButton2, floatingActionButton3;
 
     /*
     Al crearse la activity invoco a los metodos, separo todos para mejor organizacion de modulos
@@ -306,6 +306,7 @@ public class MainActivity extends AppCompatActivity {
      */
     private void initCoordinatorLayout() {
         coordinatorLayout = findViewById(R.id.coordinator_layout);
+
     }
 
     /*
@@ -340,13 +341,31 @@ public class MainActivity extends AppCompatActivity {
         FloatingActionButton fab = findViewById(R.id.add_folder);
 
         //menu es el boton flotante esclusivo para las acciones unpack repack img
-        menu = findViewById(R.id.fab);
-        //Menu en forma de circulo
-        //menu.setMultipleOfFB(3.2f);
-        //menu.setIsCircle(true);
-        //Menu en forma de linea
-        //menu.setmItemGap(48);
-        menu.setOnMenuItemClickListener(new FloatingActionMenu.OnMenuItemClickListener() {
+        materialDesignFAM = (FloatingActionMenu) findViewById(R.id.material_design_android_floating_action_menu);
+
+        floatingActionButton1 = (FloatingActionButton) findViewById(R.id.material_design_floating_action_menu_item1);
+        floatingActionButton2 = (FloatingActionButton) findViewById(R.id.material_design_floating_action_menu_item2);
+        floatingActionButton3 = (FloatingActionButton) findViewById(R.id.material_design_floating_action_menu_item3);
+
+        floatingActionButton1.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                //TODO something when floating action menu first item clicked
+
+            }
+        });
+        floatingActionButton2.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                //TODO something when floating action menu second item clicked
+                ScriptUnpack();
+            }
+        });
+        floatingActionButton3.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                //TODO something when floating action menu third item clicked
+
+            }
+        });
+        /*menu.setOnMenuItemClickListener(new FloatingActionMenu.OnMenuItemClickListener() {
             @Override
             public void onMenuItemClick(FloatingActionMenu fam, int index, FloatingActionButton item) {
                 String str = "";
@@ -363,7 +382,7 @@ public class MainActivity extends AppCompatActivity {
                     default:
                 }
             }
-        });
+        });*/
         if (fab == null) return;
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -373,15 +392,15 @@ public class MainActivity extends AppCompatActivity {
         });
 
         //Condicional que hace que se oculte el boton automaticamente al colapsar el toolbar.
-        if (name != null || type != null) {
+        /*if (name != null || type != null) {
             ViewGroup.LayoutParams layoutParams = fab.getLayoutParams();
 
             ((CoordinatorLayout.LayoutParams) layoutParams).setAnchorId(View.NO_ID);
 
             fab.setLayoutParams(layoutParams);
 
-            fab.hide();
-        }
+            fab.hide(true);
+        }*/
     }
 
     /*
@@ -740,9 +759,9 @@ public class MainActivity extends AppCompatActivity {
         //para las herramientas de unpack repack.
         if (sharedPreferences.getBoolean("TOOLENABLE",false)){
             if (directory.getAbsolutePath().equals(sharedPreferences.getString("PATHTOOL",""))){
-                menu.setVisibility(VISIBLE);
+                materialDesignFAM.setVisibility(View.VISIBLE);
             }else{
-                menu.setVisibility(View.GONE);
+                materialDesignFAM.setVisibility(View.GONE);
             }
         }
 
@@ -1027,9 +1046,15 @@ public class MainActivity extends AppCompatActivity {
 
         for (File file : adapter.getSelectedItems()) {
 
-            if (file.isFile()) uris.add(Uri.fromFile(file));
+            if (file.isFile()){
+                if (Build.VERSION.SDK_INT < 24) {
+                    uris.add(Uri.fromFile(file));
+                } else {
+                    uris.add(FileProvider.getUriForFile(this, AUTORITHY, file));
+                }
+            }
         }
-
+        if(Build.VERSION.SDK_INT >= 24) intente.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
         intente.putParcelableArrayListExtra(Intent.EXTRA_STREAM, uris);
 
         startActivity(intente);

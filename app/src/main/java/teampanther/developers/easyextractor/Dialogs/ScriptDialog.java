@@ -40,6 +40,7 @@ public class ScriptDialog extends DialogFragment {
     private Boolean iserror= false;
     private File direct;
     private String res;
+    private final String PATHDIRECTORY= "/data/local/tmp/ARM";
 
 
     //Boolean mode si es verdadero unpack, si es falso repack
@@ -126,7 +127,7 @@ public class ScriptDialog extends DialogFragment {
         if (mode){
             //UNPACK
             File boot= new File(direct,fileImgName);
-            File directorio= new File("/data/local/tmp/ARM");
+            File directorio= new File(PATHDIRECTORY);
             try {
                 FileHelper.copyFile(boot,directorio);
                 flag=true;

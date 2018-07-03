@@ -21,6 +21,7 @@ import java.util.LinkedList;
 
 import teampanther.developers.easyextractor.RecyclerView.DeviceAdapter;
 import teampanther.developers.easyextractor.RecyclerView.DeviceInfo;
+import teampanther.developers.easyextractor.UtilsHelper.FileHelper;
 
 public class DeviceActivity extends AppCompatActivity {
     RecyclerView mRecyclerView;
@@ -60,10 +61,27 @@ public class DeviceActivity extends AppCompatActivity {
         items.add(new DeviceInfo("DENSITY", getDpiDevice()));
         items.add(new DeviceInfo("KERNEL",System.getProperty("os.version")));
         items.add(new DeviceInfo("SCREEN RESOLUTION",getDeviceScreenResolution()));
+        if (FileHelper.getStatusRoot(context)){
+            items.add(new DeviceInfo("MOUNTPOINTS",getMountPoints()));
+        }
         DeviceAdapter mAdapter = new DeviceAdapter(items, context);
         mRecyclerView.setAdapter(mAdapter);
         mRecyclerView.setHasFixedSize(true);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+    }
+
+    private String getMountPoints() {
+        String res;
+        if (!FileHelper.sudoForResult("cat /proc/mtd").isEmpty()){
+            res = FileHelper.sudoForResult("cat /proc/mtd");
+        }
+        else if(!FileHelper.sudoForResult("cat /proc/emmc").isEmpty())
+        {
+            res= FileHelper.sudoForResult("cat /proc/emmc");
+        }else{
+            res= "Desconocido";
+        }
+        return res;
     }
 
     public String getDeviceScreenResolution() {
