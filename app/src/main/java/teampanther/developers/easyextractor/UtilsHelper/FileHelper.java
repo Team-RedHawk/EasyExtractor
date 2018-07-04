@@ -2,25 +2,25 @@ package teampanther.developers.easyextractor.UtilsHelper;
 
 /**
  * Created by malcolmx on 28/12/17.
+ * Modified by luffynando :V
  */
 
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.database.Cursor;
-import android.graphics.Point;
 import android.media.MediaMetadataRetriever;
 import android.net.Uri;
 import android.os.Environment;
 import android.os.storage.StorageManager;
 import android.provider.MediaStore;
 import android.support.v4.content.CursorLoader;
-import android.support.v7.app.AppCompatActivity;
 import android.text.format.DateFormat;
 import android.text.format.Formatter;
-import android.util.DisplayMetrics;
 import android.util.Log;
-import android.view.Display;
 import android.webkit.MimeTypeMap;
+
+import net.lingala.zip4j.core.ZipFile;
+import net.lingala.zip4j.exception.ZipException;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -34,6 +34,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.lang.reflect.Array;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -45,6 +46,11 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 
+import ir.mahdi.mzip.rar.Archive;
+import ir.mahdi.mzip.rar.RarArchive;
+import ir.mahdi.mzip.rar.exception.RarException;
+import ir.mahdi.mzip.rar.rarfile.FileHeader;
+import ir.mahdi.mzip.zip.ZipArchive;
 import teampanther.developers.easyextractor.R;
 
 public class FileHelper {
@@ -139,7 +145,6 @@ public class FileHelper {
 
         throw new Exception(String.format("Error renombrando %s", file.getName()));
     }
-
 
     /*
     Funcion encargada de poder comprimir archivos en formato zip, requiere la lista de archivos a
@@ -262,6 +267,27 @@ public class FileHelper {
         }
 
         return directory;
+    }
+
+    public static boolean isEncrypted(File zip){
+            try {
+                ZipFile zipFile = new ZipFile(getPath(zip));
+                return zipFile.isEncrypted();
+            }catch (ZipException e){
+                return false;
+            }
+    }
+
+    public static File unzip(File zip, String pass) throws Exception{
+        File directory = createDirectory(zip.getParentFile(), removeExtension(zip.getName()));
+        ZipArchive.unzip(getPath(zip),getPath(directory),pass);
+        return directory;
+    }
+
+    public static File UnRar(File archive) throws Exception {
+        File destination = createDirectory(archive.getParentFile(), removeExtension(archive.getName()));
+        RarArchive.extractArchive(archive, destination);
+        return destination;
     }
 
     /*
@@ -755,6 +781,9 @@ public class FileHelper {
             case IMG:
                 return R.drawable.ic_img_file;
 
+            case RAR:
+                return R.drawable.ic_rar;
+
             default:
                 return 0;
         }
@@ -820,7 +849,7 @@ public class FileHelper {
      */
     public enum FileType {
 
-        DIRECTORY, MISC_FILE, AUDIO, IMAGE, VIDEO, DOC, PPT, XLS, PDF, TXT, ZIP, APK, IMG;
+        DIRECTORY, MISC_FILE, AUDIO, IMAGE, VIDEO, DOC, PPT, XLS, PDF, TXT, ZIP, APK, IMG, RAR;
 
         public static FileType getFileType(File file) {
 
@@ -838,6 +867,9 @@ public class FileHelper {
 
             if (mime.startsWith("audio"))
                 return FileType.AUDIO;
+
+            if (mime.startsWith("application/x-rar-compressed"))
+                return FileType.RAR;
 
             if (mime.startsWith("image"))
                 return FileType.IMAGE;

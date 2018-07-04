@@ -60,7 +60,7 @@
     <string name="error_copy_file_helper">Error copy %s</string>
     <string name="title_custom">Additional features</string>
     <string name="custom_wallpaper">Wallpapers</string>
-    <string name="custom_device_info">Device information</string>
+    <string name="custom_device_info">Device</string>
     <string name="custom_device_copy">Copy</string>
     <string name="custom_device_share">Share</string>
     <string name="custom_device_copy_all">All copy</string>

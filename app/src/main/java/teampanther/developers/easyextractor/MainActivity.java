@@ -9,8 +9,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.graphics.Bitmap;
-import android.graphics.drawable.BitmapDrawable;
+import android.database.Cursor;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
@@ -25,6 +24,7 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.content.CursorLoader;
 import android.support.v4.content.FileProvider;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
@@ -33,7 +33,6 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -48,11 +47,10 @@ import teampanther.developers.easyextractor.RecyclerView.OnItemSelectedListener;
 import teampanther.developers.easyextractor.Dialogs.InputDialog;
 import teampanther.developers.easyextractor.UtilsHelper.FileHelper;
 import teampanther.developers.easyextractor.UtilsHelper.PreferenceUtil;
-
-import static android.view.View.VISIBLE;
 import static teampanther.developers.easyextractor.UtilsHelper.FileHelper.*;
 
 import java.io.File;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -66,6 +64,7 @@ public class MainActivity extends AppCompatActivity {
     private static final String EXTRA_NAME = "teampanther.developers.easyextractor.EXTRA_NAME";
     private static final String EXTRA_TYPE = "teampanther.developers.easyextractor.EXTRA_TYPE";
     private SharedPreferences sharedPreferences;
+    SharedPreferences.Editor editor;
     private NavigationView navigationView;
     private CoordinatorLayout coordinatorLayout;
     private String name;
@@ -99,7 +98,6 @@ public class MainActivity extends AppCompatActivity {
         loadIntoRecyclerView();
         invalidateToolbar();
         invalidateTitle();
-        image = (LinearLayout) findViewById(R.id.banner);
     }
 
 
@@ -482,7 +480,17 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
-
+        image = navigationView.getHeaderView(0).findViewById(R.id.banner);
+        if (sharedPreferences.getString("banner","").isEmpty()){
+            image.setBackgroundResource(R.drawable.barner);
+        }else{
+            try {
+                Drawable drawable = Drawable.createFromPath(sharedPreferences.getString("banner", ""));
+                image.setBackground(drawable);
+            }catch (Exception e){
+                image.setBackgroundResource(R.drawable.barner);
+            }
+        }
         TextView textView = navigationView.getHeaderView(0).findViewById(R.id.textView);
 
         textView.setText(getStorageUsage(this));
@@ -1178,6 +1186,7 @@ public class MainActivity extends AppCompatActivity {
     public void ScriptRepack(){
 
     }
+
     public void cIMG(View view) {
         cargarIMG();
     }
@@ -1185,8 +1194,8 @@ public class MainActivity extends AppCompatActivity {
     private void cargarIMG() {
         Intent intent = new Intent();
         intent.setType("image/");
-        intent.setAction(intent.ACTION_GET_CONTENT);
-        startActivityForResult(intent.createChooser(intent,"Seleccione la aplicacion"), REQUEST_CODE);
+        intent.setAction(Intent.ACTION_GET_CONTENT);
+        startActivityForResult(Intent.createChooser(intent,"Seleccione la aplicacion"), REQUEST_CODE);
     }
 
     @Override
@@ -1195,14 +1204,33 @@ public class MainActivity extends AppCompatActivity {
         if(resultCode==RESULT_OK){
                 Uri path=data.getData();
                 try {
-                    image.setBackground(Drawable.createFromPath(String.valueOf(path.getPath())));
-                    Toast.makeText(this, path.toString(), Toast.LENGTH_SHORT).show();
-                }catch (Exception e){
-                    Toast.makeText(this, "Error"+e, Toast.LENGTH_SHORT).show();
+                    InputStream inputStream = getContentResolver().openInputStream(path);
+                    Drawable drawable = Drawable.createFromStream(inputStream, path.toString() );
+                    image.setBackground(drawable);
+                    editor = sharedPreferences.edit();
+                    editor.putString("banner",getRealPathFromURI(path)).apply();
+                } catch (Exception e) {
+                    Toast.makeText(this, "Error" + e, Toast.LENGTH_SHORT).show();
+                    image.setBackgroundResource(R.drawable.barner);
                 }
-                
             }
+    }
 
+    public String getRealPathFromURI(Uri contentUri) {
+        String[] proj = { MediaStore.Images.Media.DATA };
+
+        //This method was deprecated in API level 11
+        //Cursor cursor = managedQuery(contentUri, proj, null, null, null);
+
+        CursorLoader cursorLoader = new CursorLoader(
+                this,
+                contentUri, proj, null, null, null);
+        Cursor cursor = cursorLoader.loadInBackground();
+
+        int column_index =
+                cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
+        cursor.moveToFirst();
+        return cursor.getString(column_index);
     }
 
 
@@ -1245,21 +1273,79 @@ public class MainActivity extends AppCompatActivity {
                 if (Intent.ACTION_GET_CONTENT.equals(getIntent().getAction())) {
 
                     Intent intent = new Intent();
-
-                    intent.setDataAndType(Uri.fromFile(file), getMimeType(file));
-
+                    if (Build.VERSION.SDK_INT < 24) {
+                        intent.setDataAndType(Uri.fromFile(file), getMimeType(file));
+                    }else{
+                        intent.setDataAndType(FileProvider.getUriForFile(context, AUTORITHY, file),getMimeType(file));
+                    }
                     setResult(Activity.RESULT_OK, intent);
 
                     finish();
                 }
                 else if (FileType.getFileType(file) == FileType.ZIP) {
-                    //final ProgressDialog dialog = ProgressDialog.show(context, "", "Descomprimiendo", true);
+                    if (FileHelper.isEncrypted(file)){
+                        InputDialog inputDialog = new InputDialog(context, "Ok", "Ingrese la contraseña") {
+                            @Override
+                            public void onActionClick(final String text) {
+                                final ProgressDialog dialog = ProgressDialog.show(context, "", "Descomprimiendo", true);
+                                Thread t= new Thread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        try {
+                                            final File nueva= unzip(file,text);
+                                            runOnUiThread(new Runnable() {
+                                                @Override
+                                                public void run() {
+                                                    setPath(nueva);
+                                                    dialog.dismiss();
+                                                }
+                                            });
+                                        }
+                                        catch (Exception e) {
+                                            dialog.dismiss();
+                                            showMessage(e);
+                                        }
+
+                                    }
+                                });
+                                t.start();
+                            }
+                        };
+
+                        inputDialog.show();
+                    }else{
+                        final ProgressDialog dialog = ProgressDialog.show(context, "", "Descomprimiendo", true);
+                        Thread t= new Thread(new Runnable() {
+                            @Override
+                            public void run() {
+                                try {
+                                    final File nueva= unzip(file);
+                                    runOnUiThread(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            setPath(nueva);
+                                            dialog.dismiss();
+                                        }
+                                    });
+                                }
+                                catch (Exception e) {
+                                    dialog.dismiss();
+                                    showMessage(e);
+                                }
+
+                            }
+                        });
+                        t.start();
+                    }
+
+
+                }else if(FileType.getFileType(file) == FileType.RAR) {
                     final ProgressDialog dialog = ProgressDialog.show(context, "", "Descomprimiendo", true);
                     Thread t= new Thread(new Runnable() {
                         @Override
                         public void run() {
                             try {
-                                final File nueva= unzip(file);
+                                final File nueva= UnRar(file);
                                 runOnUiThread(new Runnable() {
                                     @Override
                                     public void run() {
@@ -1276,9 +1362,7 @@ public class MainActivity extends AppCompatActivity {
                         }
                     });
                     t.start();
-
-                }
-                else if(getExtension(file.getName()).equals("img")){
+                }else if(getExtension(file.getName()).equals("img")){
                     //showMessage(FileHelper.getMimeType(file));
                 }else {
 
