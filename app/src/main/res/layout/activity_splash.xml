@@ -9,7 +9,7 @@
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
     android:background="@android:color/white"
-    tools:context="teampanther.developers.easyextractor.SplashActivity">
+    tools:context="net.teamredhawk.hawktool.SplashActivity">
 
     <ImageView
         android:id="@+id/splash_img"

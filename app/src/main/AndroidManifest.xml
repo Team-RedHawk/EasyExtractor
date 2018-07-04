@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="teampanther.developers.easyextractor">
+    package="net.teamredhawk.hawktool">
 
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
@@ -53,6 +53,14 @@
         <activity android:name=".DeviceActivity"
             android:parentActivityName=".MainActivity"
             android:label="@string/custom_device_info"
+            android:windowSoftInputMode="adjustPan">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".MainActivity" />
+        </activity>
+        <activity android:name=".WallpaperActivity"
+            android:parentActivityName=".MainActivity"
+            android:label="@string/custom_wallpaper"
             android:windowSoftInputMode="adjustPan">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"

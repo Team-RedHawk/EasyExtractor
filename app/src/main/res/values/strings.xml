@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Easy Extractor</string>
+    <string name="app_name">HawkTool</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
     <string name="undo">Undo</string>
@@ -38,7 +38,7 @@
     <string name="temp_title">Title</string>
     <string name="temp_date">12/MAR/2018</string>
     <string name="temp_size">12mb</string>
-    <string name="app_version">EasyExtractor v.0.5</string>
+    <string name="app_version">HawkTool v.0.6</string>
     <string name="unpack_repack">Enabled module unpack repack img</string>
     <string name="dialog_unpack_storage">Select storage where the tool will be placed</string>
     <string name="dialog_unpack_cancel">Cancel</string>
@@ -65,4 +65,5 @@
     <string name="custom_device_share">Share</string>
     <string name="custom_device_copy_all">All copy</string>
     <string name="custom_device_share_all">All share</string>
+    <string name="custom_wall_more">More…</string>
 </resources>

@@ -19,23 +19,18 @@
     <string name="external">Externo</string>
     <string name="about">Acerca de</string>
     <string name="contact">Contacto</string>
-
-
-
     <string name="zip">Zip</string>
     <string name="root">Root:</string>
     <string name="enablerootaccess">Habilitar acceso Root</string>
     <string name="theme">Tema</string>
     <string name="dark">Dark</string>
-    <string name="app_name">Easy Extractor</string>
+    <string name="app_name">HawkTool</string>
     <string name="navigation_drawer_open">Open navigation</string>
     <string name="navigation_drawer_close">Close  navigation</string>
     <string name="Copyright">Copyright © 2017-2018</string>
     <string name="buscar">Buscar</string>
     <string name="move">Mover</string>
-
     <string name="action_sort">Ordenar</string>
-
     <string name="ajustes_title_general">General</string>
     <string name="ajustes_extension">Ocultar extension</string>
     <string name="ajustes_date_modified">Mostrar fecha de modificacion</string>
@@ -45,7 +40,7 @@
     <string name="temp_date">12/MAR/2018</string>
     <string name="temp_title">Titulo</string>
     <string name="temp_size">12mb</string>
-    <string name="app_version">EasyExtractor v.0.5</string>
+    <string name="app_version">HawkTool v.0.6</string>
     <string name="unpack_repack">Habilitar el modulo de unpack, repack img</string>
     <string name="dialog_unpack_storage">Selecciona en donde deseas poner la herramienta</string>
     <string name="dialog_unpack_cancel">Cancelar</string>
@@ -66,10 +61,11 @@
     <string name="Error_no_permissions_or_space">No hay permisos para los archivos o no hay espacio suficiente.</string>
     <string name="error_copy_file_helper">Error copiando %s</string>
     <string name="title_custom">Extras</string>
-    <string name="custom_wallpaper">Fondos de Pantalla</string>
+    <string name="custom_wallpaper">Fondos</string>
     <string name="custom_device_info">Dispositivo</string>
     <string name="custom_device_copy">Copiar</string>
     <string name="custom_device_share">Compartir</string>
     <string name="custom_device_copy_all">Copiar Todo</string>
     <string name="custom_device_share_all">Compartir todo</string>
+    <string name="custom_wall_more">Mas…</string>
 </resources>
