@@ -445,6 +445,11 @@ public class MainActivity extends AppCompatActivity {
                         About_dialog dialog = new About_dialog();
                         dialog.show(fragmentManager, "About_Dialog");
                         return true;
+
+                    case R.id.Wallpapers:
+                        gotoWallpapers();
+                        return true;
+
                     case R.id.Device_info:
                         gotoDevice();
                         return true;
@@ -742,6 +747,10 @@ public class MainActivity extends AppCompatActivity {
 
     private void gotoDevice(){
         startActivity(new Intent(this, DeviceActivity.class));
+    }
+
+    private void gotoWallpapers(){
+        startActivity(new Intent(this, WallpaperActivity.class));
     }
 
     /*

@@ -11,11 +11,12 @@ import com.bumptech.glide.Glide;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 
+import net.teamredhawk.hawktool.GlideApp;
 import net.teamredhawk.hawktool.R;
 
 public class WallpaperAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
-    private static final int SECTION_VIEW = 0;
-    private static final int CONTENT_VIEW = 1;
+    public static final int SECTION_VIEW = 0;
+    public static final int CONTENT_VIEW = 1;
 
     private ArrayList<ItemInterface> mWallpaperAndSectionList;
 
@@ -74,7 +75,7 @@ public class WallpaperAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
         WallpaperModel currentUser = ((WallpaperModel) mWallpaperAndSectionList.get(position));
         myViewHolder.vieww.setText(currentUser.vistas);
-        Glide.with(context).load(currentUser.url).into(myViewHolder.imagenw);
+        GlideApp.with(context).load(currentUser.url).centerCrop().into(myViewHolder.imagenw);
         myViewHolder.wl.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

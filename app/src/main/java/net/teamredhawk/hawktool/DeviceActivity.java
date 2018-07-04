@@ -24,11 +24,11 @@ import net.teamredhawk.hawktool.RecyclerView.DeviceInfo;
 import net.teamredhawk.hawktool.UtilsHelper.FileHelper;
 
 public class DeviceActivity extends AppCompatActivity {
-    RecyclerView mRecyclerView;
-    SharedPreferences sharedPreferences;
-    LinkedList<DeviceInfo> items = new LinkedList<>();
+    private RecyclerView mRecyclerView;
+    private SharedPreferences sharedPreferences;
+    private LinkedList<DeviceInfo> items = new LinkedList<>();
     public int theme;
-    Context context;
+    private Context context;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
