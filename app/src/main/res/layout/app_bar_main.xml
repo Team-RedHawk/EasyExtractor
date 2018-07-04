@@ -44,7 +44,7 @@
 
     <com.github.clans.fab.FloatingActionButton
         android:id="@+id/add_folder"
-        app:layout_behavior="teampanther.developers.easyextractor.FloatingActionMenuBehavior"
+        app:layout_behavior="net.teamredhawk.hawktool.FloatingActionMenuBehavior"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/fab_margin"

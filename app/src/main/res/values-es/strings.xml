@@ -27,7 +27,7 @@
     <string name="app_name">HawkTool</string>
     <string name="navigation_drawer_open">Open navigation</string>
     <string name="navigation_drawer_close">Close  navigation</string>
-    <string name="Copyright">Copyright © 2017-2018</string>
+    <string name="Copyright">Copyright © 2017–2018</string>
     <string name="buscar">Buscar</string>
     <string name="move">Mover</string>
     <string name="action_sort">Ordenar</string>
@@ -40,7 +40,6 @@
     <string name="temp_date">12/MAR/2018</string>
     <string name="temp_title">Titulo</string>
     <string name="temp_size">12mb</string>
-    <string name="app_version">HawkTool v.0.6</string>
     <string name="unpack_repack">Habilitar el modulo de unpack, repack img</string>
     <string name="dialog_unpack_storage">Selecciona en donde deseas poner la herramienta</string>
     <string name="dialog_unpack_cancel">Cancelar</string>

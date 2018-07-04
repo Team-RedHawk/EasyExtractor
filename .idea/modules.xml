@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/EasyExtractor.iml" filepath="$PROJECT_DIR$/EasyExtractor.iml" />
+      <module fileurl="file://$PROJECT_DIR$/HawkTool.iml" filepath="$PROJECT_DIR$/HawkTool.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
     </modules>
   </component>

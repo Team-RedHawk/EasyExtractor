@@ -1,4 +1,15 @@
 apply plugin: 'com.android.application'
+apply plugin: 'eu.davidea.grabver'
+
+versioning {
+    // required (number)
+    major = 0
+    minor = 0
+    dependsOn = "assembleDebug"
+    // optional (any string)
+    preRelease = 'HT1'
+}
+
 
 android {
     compileSdkVersion 27
@@ -6,9 +17,12 @@ android {
         applicationId "net.teamredhawk.hawktool"
         minSdkVersion 19
         targetSdkVersion 27
-        versionCode 1
-        versionName "1.0"
+        versionCode versioning.code
+        versionName versioning.major+"."+versioning.minor+"."+versioning.patch+"."+versioning.build
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+    }
+    applicationVariants.all { variant ->
+        variant.resValue "string", "app_version", "HawkTool v."+variant.versionName
     }
     buildTypes {
         release {
@@ -36,4 +50,5 @@ dependencies {
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
+
 }

@@ -9,9 +9,6 @@ import com.github.clans.fab.FloatingActionButton;
 
 public class FloatingActionMenuBehavior extends CoordinatorLayout.Behavior<FloatingActionButton> {
 
-    private int accumulator = 0;
-    private int threshold = 0;
-
     public FloatingActionMenuBehavior() {
         super();
     }
@@ -21,31 +18,24 @@ public class FloatingActionMenuBehavior extends CoordinatorLayout.Behavior<Float
     }
 
     @Override
-    public boolean onStartNestedScroll(CoordinatorLayout coordinatorLayout, FloatingActionButton child, View directTargetChild, View target, int nestedScrollAxes) {
-        threshold = child.getHeight() / 2;
+    public boolean onStartNestedScroll(final CoordinatorLayout coordinatorLayout, final FloatingActionButton child,
+                                       final View directTargetChild, final View target, final int nestedScrollAxes) {
         return true;
     }
 
 
     @Override
-    public void onNestedScroll(CoordinatorLayout coordinatorLayout, FloatingActionButton child, View target, int dxConsumed, int dyConsumed, int dxUnconsumed, int dyUnconsumed) {
-        super.onNestedScroll(coordinatorLayout, child, target, dxConsumed, dyConsumed, dxUnconsumed, dyUnconsumed);
-        if ((accumulator * dyConsumed) < 0) { //scroll direction change
-            accumulator = 0;
-        }
-        accumulator += dyConsumed;
+    public void onNestedScroll(final CoordinatorLayout coordinatorLayout,
+                               final FloatingActionButton child,
+                               final View target, final int dxConsumed, final int dyConsumed,
+                               final int dxUnconsumed, final int dyUnconsumed) {
+        super.onNestedScroll(coordinatorLayout, child, target, dxConsumed, dyConsumed,dxUnconsumed, dyUnconsumed);
 
-        if (accumulator > threshold && !child.isHidden()) {
+        if (dyConsumed > 0 && !child.isHidden()) {
             child.hide(true);
-        } else if (accumulator < -threshold && child.isHidden()) {
+        } else if (dyConsumed <0 && child.isHidden()) {
             child.show(true);
         }
-    }
-
-    @Override
-    public void onStopNestedScroll(CoordinatorLayout coordinatorLayout, FloatingActionButton child, View target) {
-        super.onStopNestedScroll(coordinatorLayout, child, target);
-        accumulator = 0;
     }
 
 }

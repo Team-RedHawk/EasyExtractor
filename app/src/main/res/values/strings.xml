@@ -38,7 +38,6 @@
     <string name="temp_title">Title</string>
     <string name="temp_date">12/MAR/2018</string>
     <string name="temp_size">12mb</string>
-    <string name="app_version">HawkTool v.0.6</string>
     <string name="unpack_repack">Enabled module unpack repack img</string>
     <string name="dialog_unpack_storage">Select storage where the tool will be placed</string>
     <string name="dialog_unpack_cancel">Cancel</string>
