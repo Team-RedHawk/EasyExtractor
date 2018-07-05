@@ -160,8 +160,9 @@ public class MainActivity extends AppCompatActivity {
                         .show();
             }
             else {
-
-                loadIntoRecyclerView();
+                finish();
+                startActivity(getIntent());
+                //loadIntoRecyclerView();
             }
         }
 
@@ -361,34 +362,15 @@ public class MainActivity extends AppCompatActivity {
         });
         floatingActionButton2.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                //TODO something when floating action menu second item clicked
                 ScriptUnpack();
             }
         });
         floatingActionButton3.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                //TODO something when floating action menu third item clicked
+                ScriptRepack();
 
             }
         });
-        /*menu.setOnMenuItemClickListener(new FloatingActionMenu.OnMenuItemClickListener() {
-            @Override
-            public void onMenuItemClick(FloatingActionMenu fam, int index, FloatingActionButton item) {
-                String str = "";
-                switch (index) {
-                    case 0:
-                        str = "Click en instrucciones!";
-                        break;
-                    case 1:
-                        ScriptUnpack();
-                        break;
-                    case 2:
-                        str = "Click en repack!";
-                        break;
-                    default:
-                }
-            }
-        });*/
         if (fab == null) return;
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -396,17 +378,6 @@ public class MainActivity extends AppCompatActivity {
                 actionCreate();
             }
         });
-
-        //Condicional que hace que se oculte el boton automaticamente al colapsar el toolbar.
-        /*if (name != null || type != null) {
-            ViewGroup.LayoutParams layoutParams = fab.getLayoutParams();
-
-            ((CoordinatorLayout.LayoutParams) layoutParams).setAnchorId(View.NO_ID);
-
-            fab.setLayoutParams(layoutParams);
-
-            fab.hide(true);
-        }*/
     }
 
     /*
@@ -1171,6 +1142,7 @@ public class MainActivity extends AppCompatActivity {
                                     ScriptDialog unpack = new ScriptDialog();
                                     unpack.addNameImg(text + ".img");
                                     unpack.addDirectName(otro);
+                                    unpack.setAdapter(adapter);
                                     unpack.mode(true);
                                     unpack.setFileDirect(currentDirectory);
                                     unpack.show(fragmentManager, "UnpackScript");
@@ -1193,7 +1165,39 @@ public class MainActivity extends AppCompatActivity {
     Metodo para repack script aun en construccion XD
      */
     public void ScriptRepack(){
-
+        final InputDialog inputDialog = new InputDialog(this, "Aceptar", "Nombre del directorio") {
+            @Override
+            public void onActionClick(final String text) {
+                File test= new File(currentDirectory.getAbsolutePath()+File.separator+text);
+                if (test.exists()){
+                    InputDialog otroDialog= new InputDialog(MainActivity.this,"Aceptar","Nombre del boot/recovery de salida") {
+                        @Override
+                        public void onActionClick(String otro) {
+                            if (new File(currentDirectory.getAbsolutePath()+File.separator+otro+".img").exists()){
+                                showMessage("Error ya existe el archivo");
+                            }else{
+                                if (FileHelper.getStatusRoot(getApplicationContext())) {
+                                    FragmentManager fragmentManager = getSupportFragmentManager();
+                                    ScriptDialog repack = new ScriptDialog();
+                                    repack.addNameImg(otro + ".img");
+                                    repack.addDirectName(text);
+                                    repack.setAdapter(adapter);
+                                    repack.mode(false);
+                                    repack.setFileDirect(currentDirectory);
+                                    repack.show(fragmentManager, "RepackScript");
+                                }else{
+                                    showMessage(getString(R.string.error_root_acces));
+                                }
+                            }
+                        }
+                    };
+                    otroDialog.show();
+                }else{
+                    showMessage(getString(R.string.error_not_file_name)+text);
+                }
+            }
+        };
+        inputDialog.show();
     }
 
     public void cIMG(View view) {
