@@ -104,7 +104,7 @@ public class WallpaperAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                 descargar.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-
+                        //only pros :V
                     }
                 });
                 setwall.setOnClickListener(new View.OnClickListener() {
