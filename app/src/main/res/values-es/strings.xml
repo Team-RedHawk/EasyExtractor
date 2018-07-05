@@ -67,4 +67,6 @@
     <string name="custom_device_copy_all">Copiar Todo</string>
     <string name="custom_device_share_all">Compartir todo</string>
     <string name="custom_wall_more">Mas…</string>
+    <string name="custom_wall_download">Descargar</string>
+    <string name="custom_wall_set">Establecer fondo</string>
 </resources>

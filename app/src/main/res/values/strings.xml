@@ -65,4 +65,6 @@
     <string name="custom_device_copy_all">All copy</string>
     <string name="custom_device_share_all">All share</string>
     <string name="custom_wall_more">More…</string>
+    <string name="custom_wall_download">Download</string>
+    <string name="custom_wall_set">Set as Wallpaper</string>
 </resources>

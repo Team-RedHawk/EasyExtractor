@@ -39,7 +39,7 @@ public class WallpaperActivity extends AppCompatActivity {
     int recyclerViewPaddingTop;
     public int theme;
     private Context context;
-    Boolean error= false;
+    private Boolean error= false;
     private RecyclerView recyclerView;
     private WallpaperAdapter mAdapter;
     private String urlCategory = "https://app.teamredhawk.net/wallpapers/ws.php?format=json&method=pwg.categories.getList";
@@ -53,7 +53,7 @@ public class WallpaperActivity extends AppCompatActivity {
         theme();
         setContentView(R.layout.activity_wallpaper);
         sharedPreferences = this.getSharedPreferences("VALUES", Context.MODE_PRIVATE);
-        context= getApplicationContext();
+        context= WallpaperActivity.this;
         //Configura el status bar y el toolbar
         toolbarStatusBar();
         setTitle(getResources().getString(R.string.custom_wallpaper));
@@ -62,14 +62,14 @@ public class WallpaperActivity extends AppCompatActivity {
     }
 
     private void setUpRecycler() {
-        recyclerView = (RecyclerView) findViewById(R.id.wall_recycler);
-        final GridLayoutManager gridLayoutManager = new GridLayoutManager(this, 2);
+        recyclerView = findViewById(R.id.wall_recycler);
+        final GridLayoutManager gridLayoutManager = new GridLayoutManager(this, 3);
         gridLayoutManager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
 
             @Override
             public int getSpanSize(int position) {
                 if (WallpaperAdapter.SECTION_VIEW == mAdapter.getItemViewType(position)) {
-                    return 2;
+                    return 3;
                 }
                 return 1;
             }
@@ -139,9 +139,10 @@ public class WallpaperActivity extends AppCompatActivity {
                         JSONArray imagenes = jsonObject.getJSONObject("result").getJSONArray("images");
                         mwallpaperAndSectionList.add(categoria);
                         for (int i=0; i<imagesNumber; i++){
-                            String urli= imagenes.getJSONObject(i).getJSONObject("derivatives").getJSONObject("thumb").getString("url") ;
+                            String urli= imagenes.getJSONObject(i).getJSONObject("derivatives").getJSONObject("2small").getString("url") ;
                             String vistas= String.valueOf(imagenes.getJSONObject(i).getInt("hit"));
-                            mwallpaperAndSectionList.add(new WallpaperModel(urli,vistas));
+                            String urlfull = imagenes.getJSONObject(i).getString("element_url");
+                            mwallpaperAndSectionList.add(new WallpaperModel(urli,vistas,urlfull));
                         }
                     }
                 }
@@ -182,6 +183,8 @@ public class WallpaperActivity extends AppCompatActivity {
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
+                mwallpaperAndSectionList.clear();
+                categorylist.clear();
                 new AsyncTaskCategorysParseJson().execute(urlCategory);
             }
         });

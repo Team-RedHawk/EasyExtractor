@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/linealL"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="#65000000">
+
+    <ImageView
+        android:id="@+id/usericon_large"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentTop="true"
+        android:layout_height="match_parent"
+        android:layout_width="match_parent"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentRight="true" />
+    <!-- Set as wallpaper button -->
+    <LinearLayout
+        android:id="@+id/llSetWallpaper"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginBottom="10dp"
+        android:layout_marginStart="10dp"
+        android:background="@color/md_black_1000_25"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:layout_marginLeft="10dp"
+        android:layout_alignParentLeft="true">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textStyle="bold"
+            android:text="@string/custom_wall_set"
+            android:textColor="@color/md_text_white"
+            android:textSize="18sp" />
+    </LinearLayout>
+
+    <!-- Download wallpaper button -->
+
+    <LinearLayout
+        android:id="@+id/llDownloadWallpaper"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginBottom="10dp"
+        android:layout_marginEnd="10dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:background="@color/md_black_1000_25"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="10dp">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textStyle="bold"
+            android:text="@string/custom_wall_download"
+            android:textColor="@color/md_text_white"
+            android:textSize="18sp" />
+    </LinearLayout>
+</RelativeLayout>
